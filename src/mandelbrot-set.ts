@@ -1,6 +1,8 @@
 import vertexShaderSource from './shaders/vertex.glsl';
 import fragmentShaderSource from './shaders/fragment.glsl';
 
+const SCALE_MULTIPLIER = 2;
+
 prepareMandelbroSet();
 
 function prepareMandelbroSet() {
@@ -71,7 +73,7 @@ function setUpUniforms(gl: WebGLRenderingContext, program: WebGLProgram, canvas:
     gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
 
     const scaleUniformLocation = gl.getUniformLocation(program, 'scale');
-    gl.uniform1f(scaleUniformLocation, canvas.width / (4 * params.z));
+    gl.uniform1f(scaleUniformLocation, canvas.width / (SCALE_MULTIPLIER * Math.exp(params.z)));
 
     const centerUniformLocation = gl.getUniformLocation(program, 'center');
     gl.uniform2f(centerUniformLocation, params.x, params.y);
@@ -121,7 +123,7 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
                     params.z -= scaleStep;
                     break;
             }
-            gl.uniform1f(scaleUniformLocation, canvas.width / (4 * Math.exp(params.z)));
+            gl.uniform1f(scaleUniformLocation, canvas.width / (SCALE_MULTIPLIER * Math.exp(params.z)));
             gl.uniform2f(centerUniformLocation, params.x, params.y);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
