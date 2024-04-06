@@ -1,7 +1,7 @@
 
 <h1><table border="0px"><tr><td valign="center"><img src="./assets/favicon.png" height="55px"></td><td valign="center">Mandelbrot Set Visualization</td></tr></table></h1>
 
-This project is a viewer for the Mandelbrot set, a particular two-dimensional set defined in the complex plane that exhibits internal homotety; it is therefore a fractal.
+This project is a visualizer for the Mandelbrot set, a particular two-dimensional set defined in the complex plane that exhibits internal homotety; it is therefore a fractal.
 
 Try the web [demo](https://xhst.github.io/mandelbrot-set/).
 
