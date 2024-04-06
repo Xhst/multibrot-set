@@ -3,7 +3,9 @@
 
 This project is a viewer for the Mandelbrot set, a particular two-dimensional set defined in the complex plane that exhibits internal homotety; it is therefore a fractal.
 
-<h2>🔎 About Mandelbrot Set</h2>
+Try the web [demo](https://xhst.github.io/mandelbrot-set/).
+
+## 🔎 About Mandelbrot Set
 
 The **Mandelbrot Set** $\mathcal{M}$ is defined from a family of complex quadratic polynomials: 
 
@@ -23,3 +25,21 @@ z_{n+1} = z^2 + c\end{cases}$$
 if we indicate with $f^n_c(z)$ the $n$-th iteration of $f_c(z)$, $(f_c \circ f_c \circ \dots \circ f_c)(z)$ self composed $n$ times, the Mandelbrot Set is:
 
 $$\mathcal{M} =  \\\{\ c \in \mathbb{C} : \sup_{n \in \mathbb{N}}\ |f^n_c(z)| < \infty \\}\ $$
+
+## 🟢 Getting started
+### ✔️ Prerequisites
+You need to have Node.js and npm installed on your machine. You can download Node.js [here](https://nodejs.org/en/download/) and npm is included in the installation.
+### 🛠 Installation
+First, clone the repository to your local machine:
+```
+git clone https://github.com/xhst/mandelbrot-set.git
+```
+then, navigate to the project directory and install the dependencies with:
+```
+npm install
+```
+### ▶️ Build
+To build the application, run:
+```
+npm run build
+```
