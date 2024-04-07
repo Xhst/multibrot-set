@@ -4,10 +4,15 @@ import fragmentShaderSource from './shaders/fragment.glsl';
 // Constant for scaling the Mandelbrot set visualization
 const SCALE_MULTIPLIER = 2;
 
+// Step size for zooming and movement
 const SCALE_STEP: number = 0.01;
+
+// Variable to hold interval reference for continuous movement
+let interval: NodeJS.Timeout | null = null;
 
 // Call the function to initialize and prepare the Mandelbrot set visualization
 prepareMandelbroSet();
+
 
 /**
  * Initializes and prepares the Mandelbrot set visualization.
@@ -26,6 +31,26 @@ function prepareMandelbroSet(): void {
     drawMandelbrotSet(canvas, gl);
 }
 
+
+/**
+ * Draws the Mandelbrot set on the canvas.
+ * @param canvas The canvas element.
+ * @param gl The WebGL rendering context.
+ * @param max_iterations The maximum number of iterations for the Mandelbrot set calculation.
+ */
+function drawMandelbrotSet(canvas: HTMLCanvasElement, gl: WebGLRenderingContext, max_iterations: number = 100): void {
+    let program: WebGLProgram = createShaderProgram(gl, max_iterations);
+
+    setUpVertexBuffer(gl, program);
+    let { scaleUniformLocation, centerUniformLocation, params } = setUpUniforms(gl, program, canvas);
+
+    addEventListeners(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+
+    // Render the Mandelbrot set
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+
 /**
  * Creates a canvas element and appends it to the document body.
  * @returns The created canvas element.
@@ -37,6 +62,7 @@ function createCanvas(): HTMLCanvasElement {
     canvas.height = window.innerHeight;
     return canvas;
 }
+
 
 /**
  * Creates a shader given its type and source code.
@@ -51,6 +77,7 @@ function createShader(gl: WebGLRenderingContext, type: number, source: string): 
     gl.compileShader(shader);
     return shader as WebGLShader;
 }
+
 
 /**
  * Creates a shader program by compiling vertex and fragment shaders.
@@ -72,6 +99,7 @@ function createShaderProgram(gl: WebGLRenderingContext, max_iterations: number):
     return program as WebGLProgram;
 }
 
+
 /**
  * Sets up the vertex buffer.
  * @param gl The WebGL rendering context.
@@ -80,11 +108,14 @@ function createShaderProgram(gl: WebGLRenderingContext, max_iterations: number):
 function setUpVertexBuffer(gl: WebGLRenderingContext, program: WebGLProgram): void {
     const positionAttributeLocation: number = gl.getAttribLocation(program, 'position');
     const positionBuffer: WebGLBuffer | null = gl.createBuffer();
+
+    // Define vertices for a fullscreen quad
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 }
+
 
 /**
  * Sets up uniforms for the shader program.
@@ -94,33 +125,42 @@ function setUpVertexBuffer(gl: WebGLRenderingContext, program: WebGLProgram): vo
  * @returns An object containing references to scale, center, and params uniform locations.
  */
 function setUpUniforms(gl: WebGLRenderingContext, program: WebGLProgram, canvas: HTMLCanvasElement): {scaleUniformLocation: WebGLUniformLocation, centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}} {
+    // Initial values for the x, y, and z parameters
     const params: {x: number, y: number, z: number} = {x: -0.5, y: 0.0, z: 1.0};
+
+    // Set resolution uniform
     const resolutionUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'resolution');
     gl.uniform2f(resolutionUniformLocation as WebGLUniformLocation, canvas.width, canvas.height);
 
+    // Set scale uniform
     const scaleUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'scale');
     gl.uniform1f(scaleUniformLocation as WebGLUniformLocation, canvas.width / (SCALE_MULTIPLIER * Math.exp(params.z)));
 
+    // Set center uniform
     const centerUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'center');
     gl.uniform2f(centerUniformLocation as WebGLUniformLocation, params.x, params.y);
 
     return { scaleUniformLocation: scaleUniformLocation as WebGLUniformLocation, centerUniformLocation: centerUniformLocation as WebGLUniformLocation, params };
 }
 
+
+/**
+ * Updates uniforms for the shader program.
+ * @param gl The WebGL rendering context.
+ * @param canvas The canvas element.
+ * @param scaleUniformLocation The uniform location for the scale parameter.
+ * @param centerUniformLocation The uniform location for the center parameter.
+ * @param params An object containing the current values of the x, y, and z parameters.
+ */
 function updateUniforms(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, scaleUniformLocation: WebGLUniformLocation, 
     centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}) {
+    // Update scale and center uniforms
     gl.uniform1f(scaleUniformLocation, canvas.width / (SCALE_MULTIPLIER * Math.exp(params.z)));
     gl.uniform2f(centerUniformLocation, params.x, params.y);
+    // Draw
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
-let interval: NodeJS.Timeout | null = null;
-
-document.addEventListener('mouseup', () => {
-    if (interval) {
-        clearInterval(interval);
-    }
-});
 
 /**
  * Adds event listeners for interaction with the Mandelbrot set visualization.
@@ -130,8 +170,17 @@ document.addEventListener('mouseup', () => {
  * @param centerUniformLocation The uniform location for the center parameter.
  * @param params An object containing the current values of the x, y, and z parameters.
  */
-function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, scaleUniformLocation: WebGLUniformLocation,
-     centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}) {
+function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, scaleUniformLocation: WebGLUniformLocation, 
+    centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}) {
+    
+    // Add event listener to clear interval on mouseup
+    document.addEventListener('mouseup', () => {
+        if (interval) {
+            clearInterval(interval);
+        }
+    });
+
+    // Event listener for changing maximum iterations
     document.getElementById('max-iterations-btn')!.addEventListener('click', () => {
         const maxIterations: number = parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
         
@@ -139,6 +188,7 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
         drawMandelbrotSet(canvas, gl, maxIterations);
     });
 
+    // Event listeners for movements and zooming
     document.getElementById('move-down')!.addEventListener('mousedown', () => {
         interval = setInterval(() => {
             params.y -= SCALE_STEP;
@@ -181,6 +231,7 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
         }, 100);
     });
 
+    // Event listeners for discrete movements and zooming
     document.getElementById('move-down')!.addEventListener('click', () => {
         params.y -= SCALE_STEP;
         updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
@@ -211,7 +262,7 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
         updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
     });
 
-    // Add arrow key and other key event listeners for scaling and interaction
+    // Event listener for keyboard controls
     window.addEventListener('keydown', (event: KeyboardEvent) => {
         const arrowKeys: string[] = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
         const wasdKeys: string[] = ['w', 'a', 's', 'd'];
@@ -245,22 +296,4 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
             updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
         }
     });
-}
-
-/**
- * Draws the Mandelbrot set on the canvas.
- * @param canvas The canvas element.
- * @param gl The WebGL rendering context.
- * @param max_iterations The maximum number of iterations for the Mandelbrot set calculation.
- */
-function drawMandelbrotSet(canvas: HTMLCanvasElement, gl: WebGLRenderingContext, max_iterations: number = 100): void {
-    let program: WebGLProgram = createShaderProgram(gl, max_iterations);
-
-    setUpVertexBuffer(gl, program);
-    let { scaleUniformLocation, centerUniformLocation, params } = setUpUniforms(gl, program, canvas);
-
-    addEventListeners(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
-
-    // Render the Mandelbrot set
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
