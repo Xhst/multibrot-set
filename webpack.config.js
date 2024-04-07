@@ -2,8 +2,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: './src/mandelbrot-set.ts',
+  watch: true,
   output: {
     filename: 'mandelbrot-set.js',
     path: __dirname + '/build',
