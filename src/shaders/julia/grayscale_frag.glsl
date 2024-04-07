@@ -1,0 +1,49 @@
+// Define the maximum number of iterations for the Mandelbrot set calculation
+// the value between the @ is replaced with the actual value during compilation,
+// which can be set by the user in the application, that's because OpenGL doesn't support dynamic loops
+const int MAX_ITERATIONS = @MAX_ITERATIONS@;
+
+// Set the precision for floating-point operations
+precision mediump float;
+
+// Uniform variables representing the resolution of the screen,
+// scaling factor, and center position of the Mandelbrot set
+uniform vec2 resolution;
+uniform float scale;
+uniform vec2 center;
+uniform vec3 colors[16];
+uniform vec2 position;
+
+void main() {
+    vec2 scale2 = vec2(scale, scale * resolution.y / resolution.x);
+
+    // Calculate the position of the current pixel in the complex plane
+    vec2 z = (gl_FragCoord.xy - resolution / 2.0) * (scale2 / resolution) - center;
+    
+    // Initialize the iteration count to 0
+    int iterations = 0;
+    
+    // Iterate to determine whether the current pixel is in the Mandelbrot set
+    for (int i = 0; i < MAX_ITERATIONS; i++) {
+        // Check if the magnitude of z exceeds 2, indicating it's not in the set
+        if (length(z) > 2.0) {
+            // Exit the loop if the escape condition is met
+            break;
+        }
+            
+        // Calculate the next iteration of z using the Mandelbrot formula
+        vec2 newZ = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + position;
+        
+        // Update the value of z for the next iteration
+        z = newZ;
+        
+        // Increment the iteration count
+        iterations++;
+    }
+
+    // Calculate the color based on the number of iterations
+    float color = float(iterations) / float(MAX_ITERATIONS);
+    
+    // Output the final color for the current pixel
+    gl_FragColor = vec4(color, color, color, 1.0);
+}
