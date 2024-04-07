@@ -1,8 +1,19 @@
 import vertexShaderSource from './shaders/vertex.glsl';
-import fragmentShaderSource from './shaders/fragment.glsl';
+import m_grayscale from './shaders/mandelbrot/grayscale_frag.glsl';
+import j_grayscale from './shaders/julia/grayscale_frag.glsl';
+import m_discrete from './shaders/mandelbrot/discrete_frag.glsl';
+import j_discrete from './shaders/julia/discrete_frag.glsl';
+import m_linear from './shaders/mandelbrot/linear_frag.glsl';
+import j_linear from './shaders/julia/linear_frag.glsl';
+import m_norm_iter_count from './shaders/mandelbrot/norm_iter_count_frag.glsl';
+import j_norm_iter_count from './shaders/julia/norm_iter_count_frag.glsl';
 
-// Constant for scaling the Mandelbrot set visualization
-const SCALE_MULTIPLIER = 2;
+type Color = {
+    r: number;
+    g: number;
+    b: number;
+};
+
 
 // Step size for zooming and movement
 const SCALE_STEP: number = 0.01;
@@ -10,14 +21,42 @@ const SCALE_STEP: number = 0.01;
 // Variable to hold interval reference for continuous movement
 let interval: NodeJS.Timeout | null = null;
 
-// Call the function to initialize and prepare the Mandelbrot set visualization
-prepareMandelbroSet();
+let global_position: { x: number, y: number, z: number } = { x: 0.25, y: 0, z: 4 };
 
+let julia_position: { x: number, y: number } = { x: 0.285, y: 0.01 };
+
+let colors: Array<Color> = [
+    {r: 9/255, g: 1/255, b: 47/255},
+    {r: 4/255, g: 4/255, b: 73/255},
+    {r: 0/255, g: 7/255, b: 100/255},
+    {r: 12/255, g: 44/255, b: 138/255},
+    {r: 24/255, g: 82/255, b: 177/255},
+    {r: 57/255, g: 125/255, b: 209/255},
+    {r: 134/255, g: 181/255, b: 229/255},
+    {r: 211/255, g: 236/255, b: 248/255},
+    {r: 241/255, g: 233/255, b: 191/255},
+    {r: 248/255, g: 201/255, b: 95/255},
+    {r: 255/255, g: 170/255, b: 0/255},
+    {r: 204/255, g: 128/255, b: 0/255},
+    {r: 153/255, g: 87/255, b: 0/255},
+    {r: 106/255, g: 52/255, b: 3/255},
+    {r: 66/255, g: 30/255, b: 15/255},
+    {r: 25/255, g: 7/255, b: 26/255},
+];
+
+main()
+
+function main() {
+    const mandelbrotCanvas = prepareMandelbroSet();
+    const juliaCanvas = prepareJuliaSet();
+
+    addEventListeners(mandelbrotCanvas, juliaCanvas);
+}
 
 /**
  * Initializes and prepares the Mandelbrot set visualization.
  */
-function prepareMandelbroSet(): void {
+function prepareMandelbroSet() {
     // Create a canvas element and get WebGL context
     const canvas: HTMLCanvasElement = createCanvas();
     const gl: WebGLRenderingContext | null = canvas.getContext('webgl');
@@ -28,25 +67,94 @@ function prepareMandelbroSet(): void {
     }
 
     // Draw the Mandelbrot set
-    drawMandelbrotSet(canvas, gl);
-}
+    drawMandelbrotSet(canvas);
 
+    return canvas;
+}
 
 /**
  * Draws the Mandelbrot set on the canvas.
  * @param canvas The canvas element.
- * @param gl The WebGL rendering context.
  * @param max_iterations The maximum number of iterations for the Mandelbrot set calculation.
  */
-function drawMandelbrotSet(canvas: HTMLCanvasElement, gl: WebGLRenderingContext, max_iterations: number = 100): void {
-    let program: WebGLProgram = createShaderProgram(gl, max_iterations);
+function drawMandelbrotSet(canvas: HTMLCanvasElement): void {
+    const gl = canvas.getContext('webgl');
+
+    const max_iterations = parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
+    const algorithmValue: string = (document.getElementById('color-alg') as HTMLSelectElement).value
+
+    let algorithm: string
+    switch (algorithmValue) {
+        default:
+        case "0":
+            algorithm = m_grayscale
+            break;
+        case"1":
+            algorithm = m_discrete
+            break;
+        case "2":
+            algorithm = m_linear
+            break;
+        case "3":
+            algorithm = m_norm_iter_count
+            break
+    }
+
+    const program: WebGLProgram = createShaderProgram(gl, max_iterations, algorithm);
 
     setUpVertexBuffer(gl, program);
-    let { scaleUniformLocation, centerUniformLocation, params } = setUpUniforms(gl, program, canvas);
-
-    addEventListeners(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+    setUpUniforms(canvas);
 
     // Render the Mandelbrot set
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+
+function prepareJuliaSet() {
+    // Create a canvas element and get WebGL context
+    const canvas: HTMLCanvasElement = createCanvas();
+    const gl: WebGLRenderingContext | null = canvas.getContext('webgl');
+
+    // Check if WebGL is supported
+    if (!gl) {
+        throw new Error('WebGL not supported');
+    }
+
+    // Draw the Julia set
+    drawJuliaSet(canvas);
+
+    return canvas;
+}
+
+function drawJuliaSet(canvas: HTMLCanvasElement): void {
+    const gl = canvas.getContext('webgl');
+
+    const max_iterations = parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
+    const algorithmValue: string = (document.getElementById('color-alg') as HTMLSelectElement).value
+
+    let algorithm: string
+    switch (algorithmValue) {
+        default:
+        case "0":
+            algorithm = j_grayscale
+            break;
+        case"1":
+            algorithm = j_discrete
+            break;
+        case "2":
+            algorithm = j_linear
+            break;
+        case "3":
+            algorithm = j_norm_iter_count
+            break
+    }
+
+    const program: WebGLProgram = createShaderProgram(gl, max_iterations, algorithm);
+
+    setUpVertexBuffer(gl, program);
+    setUpUniforms(canvas, julia_position);
+
+    // Render the Julia set
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
@@ -57,9 +165,12 @@ function drawMandelbrotSet(canvas: HTMLCanvasElement, gl: WebGLRenderingContext,
  */
 function createCanvas(): HTMLCanvasElement {
     const canvas: HTMLCanvasElement = document.createElement('canvas');
-    document.body.appendChild(canvas);
-    canvas.width = window.innerWidth;
+    document.getElementById('canvas-container')!.appendChild(canvas);
+
+    let sideBySide: boolean = (document.getElementById('side-by-side') as HTMLInputElement).checked
+    canvas.width = sideBySide ? window.innerWidth/2 : window.innerWidth;
     canvas.height = window.innerHeight;
+
     return canvas;
 }
 
@@ -85,9 +196,9 @@ function createShader(gl: WebGLRenderingContext, type: number, source: string): 
  * @param max_iterations The maximum number of iterations for the Mandelbrot set calculation.
  * @returns The created shader program.
  */
-function createShaderProgram(gl: WebGLRenderingContext, max_iterations: number): WebGLProgram {
-    let vertexShader: WebGLShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    let fragmentShader: WebGLShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource.replace('@MAX_ITERATIONS@', String(max_iterations)));
+function createShaderProgram(gl: WebGLRenderingContext, max_iterations: number, fragmentShaderSource: string): WebGLProgram {
+    const vertexShader: WebGLShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader: WebGLShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource.replace('@MAX_ITERATIONS@', String(max_iterations)));
     
     const program: WebGLProgram | null = gl.createProgram();
 
@@ -122,11 +233,11 @@ function setUpVertexBuffer(gl: WebGLRenderingContext, program: WebGLProgram): vo
  * @param gl The WebGL rendering context.
  * @param program The shader program.
  * @param canvas The canvas element.
- * @returns An object containing references to scale, center, and params uniform locations.
+ * @returns An object containing references to scale, center, and global_position uniform locations.
  */
-function setUpUniforms(gl: WebGLRenderingContext, program: WebGLProgram, canvas: HTMLCanvasElement): {scaleUniformLocation: WebGLUniformLocation, centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}} {
-    // Initial values for the x, y, and z parameters
-    const params: {x: number, y: number, z: number} = {x: -0.5, y: 0.0, z: 1.0};
+function setUpUniforms(canvas: HTMLCanvasElement, position: {x: number, y: number} | undefined = undefined) {
+    const gl: WebGLRenderingContext = canvas.getContext('webgl');
+    const program: WebGLProgram = gl.getParameter(gl.CURRENT_PROGRAM);
 
     // Set resolution uniform
     const resolutionUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'resolution');
@@ -134,13 +245,21 @@ function setUpUniforms(gl: WebGLRenderingContext, program: WebGLProgram, canvas:
 
     // Set scale uniform
     const scaleUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'scale');
-    gl.uniform1f(scaleUniformLocation as WebGLUniformLocation, canvas.width / (SCALE_MULTIPLIER * Math.exp(params.z)));
+    gl.uniform1f(scaleUniformLocation as WebGLUniformLocation, global_position.z);
 
     // Set center uniform
     const centerUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'center');
-    gl.uniform2f(centerUniformLocation as WebGLUniformLocation, params.x, params.y);
+    gl.uniform2f(centerUniformLocation as WebGLUniformLocation, global_position.x, global_position.y);
 
-    return { scaleUniformLocation: scaleUniformLocation as WebGLUniformLocation, centerUniformLocation: centerUniformLocation as WebGLUniformLocation, params };
+    // Set colors uniform
+    const colorsUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'colors');
+    const colorsArray: number[] = colors.flatMap(color => [color.r, color.g, color.b]);
+    gl.uniform3fv(colorsUniformLocation as WebGLUniformLocation, colorsArray);
+
+    if (position != undefined) {
+        const positionUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'position');
+        gl.uniform2f(positionUniformLocation, position.x, position.y);
+    }
 }
 
 
@@ -150,13 +269,44 @@ function setUpUniforms(gl: WebGLRenderingContext, program: WebGLProgram, canvas:
  * @param canvas The canvas element.
  * @param scaleUniformLocation The uniform location for the scale parameter.
  * @param centerUniformLocation The uniform location for the center parameter.
- * @param params An object containing the current values of the x, y, and z parameters.
+ * @param global_position An object containing the current values of the x, y, and z parameters.
  */
-function updateUniforms(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, scaleUniformLocation: WebGLUniformLocation, 
-    centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}) {
+function updateUniforms(canvas: HTMLCanvasElement) {
+    const gl: WebGLRenderingContext = canvas.getContext('webgl');
+    const program: WebGLProgram = gl.getParameter(gl.CURRENT_PROGRAM);
+
+    // Update resolution uniform
+    gl.uniform2f(gl.getUniformLocation(program, 'resolution'), canvas.width, canvas.height);
+
     // Update scale and center uniforms
-    gl.uniform1f(scaleUniformLocation, canvas.width / (SCALE_MULTIPLIER * Math.exp(params.z)));
-    gl.uniform2f(centerUniformLocation, params.x, params.y);
+    gl.uniform1f(gl.getUniformLocation(program, 'scale'), global_position.z);
+
+    gl.uniform2f(gl.getUniformLocation(program, 'center'), global_position.x, global_position.y);
+    // Draw
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+
+function updateJuliaPositions(x: number, y: number) {
+    julia_position.x = x;
+    julia_position.y = y;
+
+    (document.getElementById('julia-x') as HTMLInputElement).value = x.toFixed(6);
+    (document.getElementById('julia-y') as HTMLInputElement).value = y.toFixed(6);
+
+}
+
+function updateJuliaUniforms(canvas: HTMLCanvasElement) {
+    const gl: WebGLRenderingContext = canvas.getContext('webgl');
+    const program: WebGLProgram = gl.getParameter(gl.CURRENT_PROGRAM);
+
+    gl.uniform1f(gl.getUniformLocation(program, 'scale'), global_position.z);
+
+    gl.uniform2f(gl.getUniformLocation(program, 'center'), 
+        global_position.x, global_position.y);
+
+    gl.uniform2f(gl.getUniformLocation(program, 'position'), 
+        julia_position.x, julia_position.y);
     // Draw
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
@@ -168,10 +318,9 @@ function updateUniforms(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, sc
  * @param canvas The canvas element.
  * @param scaleUniformLocation The uniform location for the scale parameter.
  * @param centerUniformLocation The uniform location for the center parameter.
- * @param params An object containing the current values of the x, y, and z parameters.
+ * @param global_position An object containing the current values of the x, y, and z parameters.
  */
-function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, scaleUniformLocation: WebGLUniformLocation, 
-    centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}) {
+function addEventListeners(mandelbrotCanvas: HTMLCanvasElement, juliaCanvas: HTMLCanvasElement) {
     
     // Add event listener to clear interval on mouseup
     document.addEventListener('mouseup', () => {
@@ -187,130 +336,204 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
         }
     });
 
-
     // Event listener for changing maximum iterations
     document.getElementById('max-iterations-btn')!.addEventListener('click', () => {
         const maxIterations: number = parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
-        
+
+        const juliaPositionX: number = parseFloat((document.getElementById('julia-x') as HTMLInputElement).value);
+        const juliaPositionY: number = parseFloat((document.getElementById('julia-y') as HTMLInputElement).value);
+        updateJuliaPositions(juliaPositionX, juliaPositionY);
+
         console.log('Drawing Mandelbrot set with max iterations:', maxIterations);
-        drawMandelbrotSet(canvas, gl, maxIterations);
+
+        drawMandelbrotSet(mandelbrotCanvas);
+        drawJuliaSet(juliaCanvas);
     });
+
+    document.getElementById('side-by-side')!.addEventListener('change', () => {
+        const sideBySide: boolean = (document.getElementById('side-by-side') as HTMLInputElement).checked
+        mandelbrotCanvas.width = sideBySide ? window.innerWidth/2 : window.innerWidth;
+        mandelbrotCanvas.height = window.innerHeight;
+        juliaCanvas.width = sideBySide ? window.innerWidth/2 : window.innerWidth;
+        juliaCanvas.height = window.innerHeight;
+
+        updateUniforms(mandelbrotCanvas);
+        updateUniforms(juliaCanvas);
+    });
+    document.getElementById('color-alg')!.addEventListener('change', () => {        
+        drawMandelbrotSet(mandelbrotCanvas);
+        drawJuliaSet(juliaCanvas);
+    });
+
+
+
+    mandelbrotCanvas.addEventListener('click', (event: MouseEvent) => {
+        updateJuliaPosition(event);
+    });
+    mandelbrotCanvas.addEventListener('mousedown', (event: MouseEvent) => {
+        interval = setInterval(() => {
+            updateJuliaPosition(event);
+        }, 100);
+    });
+    mandelbrotCanvas.addEventListener('touchstart', (event: TouchEvent) => {
+        interval = setInterval(() => {
+            updateJuliaPosition(event);
+        }, 100);
+    });
+
+    // Get the pointer coordinates on the canvas
+    const updateJuliaPosition = (event: MouseEvent | TouchEvent) => {
+        const rect: DOMRect = mandelbrotCanvas.getBoundingClientRect();
+        const clientX: number = ((event instanceof MouseEvent) ? event.clientX : (event.touches[0].clientX)) - rect.left;
+        const clientY: number = ((event instanceof MouseEvent) ? event.clientY : (event.touches[0].clientY)) - rect.top;
+
+        
+        const fragX = clientX
+        const fragY = mandelbrotCanvas.height - clientY
+
+        const x = ((fragX - (mandelbrotCanvas.width / 2)) * (global_position.z / mandelbrotCanvas.width)) - global_position.x;
+        const y = ((fragY - (mandelbrotCanvas.height / 2)) * (global_position.z / mandelbrotCanvas.width)) - global_position.y;
+        
+        console.log(clientX, clientY, x, y)
+        
+        updateJuliaPositions(x, y);
+
+        updateJuliaUniforms(juliaCanvas)
+    };
 
     // Event listeners for movements and zooming (touch)
     document.getElementById('move-down')!.addEventListener('touchstart', () => {
         interval = setInterval(() => {
-            params.y -= SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.y -= SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('move-up')!.addEventListener('touchstart', () => {
         interval = setInterval(() => {
-            params.y += SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.y += SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('move-left')!.addEventListener('touchstart', () => {
         interval = setInterval(() => {
-            params.x -= SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.x -= SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('move-right')!.addEventListener('touchstart', () => {
         interval = setInterval(() => {
-            params.x += SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.x += SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('zoom-out')!.addEventListener('touchstart', () => {
         interval = setInterval(() => {
-            params.z += SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.z -= SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('zoom-in')!.addEventListener('touchstart', () => {
         interval = setInterval(() => {
-            params.z -= SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.z += SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     // Event listeners for movements and zooming (mouse)
     document.getElementById('move-down')!.addEventListener('mousedown', () => {
         interval = setInterval(() => {
-            params.y -= SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.y -= SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('move-up')!.addEventListener('mousedown', () => {
         interval = setInterval(() => {
-            params.y += SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.y += SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('move-left')!.addEventListener('mousedown', () => {
         interval = setInterval(() => {
-            params.x -= SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.x -= SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('move-right')!.addEventListener('mousedown', () => {
         interval = setInterval(() => {
-            params.x += SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.x += SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('zoom-out')!.addEventListener('mousedown', () => {
         interval = setInterval(() => {
-            params.z += SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.z -= SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     document.getElementById('zoom-in')!.addEventListener('mousedown', () => {
         interval = setInterval(() => {
-            params.z -= SCALE_STEP;
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+            global_position.z += SCALE_STEP;
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }, 100);
     });
 
     // Event listeners for discrete movements and zooming
     document.getElementById('move-down')!.addEventListener('click', () => {
-        params.y -= SCALE_STEP;
-        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+        global_position.y -= SCALE_STEP;
+        updateUniforms(mandelbrotCanvas);
+        updateUniforms(juliaCanvas);
     });
 
     document.getElementById('move-up')!.addEventListener('click', () => {
-        params.y += SCALE_STEP;
-        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+        global_position.y += SCALE_STEP;
+        updateUniforms(mandelbrotCanvas);
+        updateUniforms(juliaCanvas);
     });
 
     document.getElementById('move-left')!.addEventListener('click', () => {
-        params.x -= SCALE_STEP;
-        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+        global_position.x -= SCALE_STEP;
+        updateUniforms(mandelbrotCanvas);
+        updateUniforms(juliaCanvas);
     });
 
     document.getElementById('move-right')!.addEventListener('click', () => {
-        params.x += SCALE_STEP;
-        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+        global_position.x += SCALE_STEP;
+        updateUniforms(mandelbrotCanvas);
+        updateUniforms(juliaCanvas);
     });
 
     document.getElementById('zoom-out')!.addEventListener('click', () => {
-        params.z += SCALE_STEP;
-        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+        global_position.z -= SCALE_STEP;
+        updateUniforms(mandelbrotCanvas);
+        updateUniforms(juliaCanvas);
     });
 
     document.getElementById('zoom-in')!.addEventListener('click', () => {
-        params.z -= SCALE_STEP;
-        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+        global_position.z += SCALE_STEP;
+        updateUniforms(mandelbrotCanvas);
+        updateUniforms(juliaCanvas);
     });
 
     // Event listener for keyboard controls
@@ -323,28 +546,29 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
             switch (event.key) {
                 case 'ArrowUp':
                 case 'w':
-                    params.y += SCALE_STEP;
+                    global_position.y += SCALE_STEP;
                     break;
                 case 'ArrowDown':
                 case 's':
-                    params.y -= SCALE_STEP;
+                    global_position.y -= SCALE_STEP;
                     break;
                 case 'ArrowLeft':
                 case 'a':
-                    params.x -= SCALE_STEP;
+                    global_position.x -= SCALE_STEP;
                     break;
                 case 'ArrowRight':
                 case 'd':
-                    params.x += SCALE_STEP;
+                    global_position.x += SCALE_STEP;
                     break;
                 case 'z':
-                    params.z += SCALE_STEP;
+                    global_position.z += SCALE_STEP;
                     break;
                 case 'x':
-                    params.z -= SCALE_STEP;
+                    global_position.z -= SCALE_STEP;
                     break;
             }
-            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+            updateUniforms(mandelbrotCanvas);
+            updateUniforms(juliaCanvas);
         }
     });
 }
