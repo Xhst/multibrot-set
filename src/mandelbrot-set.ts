@@ -180,6 +180,14 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
         }
     });
 
+    // Add event listener to clear interval on touchend
+    document.addEventListener('touchend', () => {
+        if (interval) {
+            clearInterval(interval);
+        }
+    });
+
+
     // Event listener for changing maximum iterations
     document.getElementById('max-iterations-btn')!.addEventListener('click', () => {
         const maxIterations: number = parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
@@ -188,7 +196,50 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
         drawMandelbrotSet(canvas, gl, maxIterations);
     });
 
-    // Event listeners for movements and zooming
+    // Event listeners for movements and zooming (touch)
+    document.getElementById('move-down')!.addEventListener('touchstart', () => {
+        interval = setInterval(() => {
+            params.y -= SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('move-up')!.addEventListener('touchstart', () => {
+        interval = setInterval(() => {
+            params.y += SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('move-left')!.addEventListener('touchstart', () => {
+        interval = setInterval(() => {
+            params.x -= SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('move-right')!.addEventListener('touchstart', () => {
+        interval = setInterval(() => {
+            params.x += SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('zoom-out')!.addEventListener('touchstart', () => {
+        interval = setInterval(() => {
+            params.z += SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('zoom-in')!.addEventListener('touchstart', () => {
+        interval = setInterval(() => {
+            params.z -= SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    // Event listeners for movements and zooming (mouse)
     document.getElementById('move-down')!.addEventListener('mousedown', () => {
         interval = setInterval(() => {
             params.y -= SCALE_STEP;
