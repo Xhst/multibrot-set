@@ -4,6 +4,8 @@ import fragmentShaderSource from './shaders/fragment.glsl';
 // Constant for scaling the Mandelbrot set visualization
 const SCALE_MULTIPLIER = 2;
 
+const SCALE_STEP: number = 0.01;
+
 // Call the function to initialize and prepare the Mandelbrot set visualization
 prepareMandelbroSet();
 
@@ -105,6 +107,21 @@ function setUpUniforms(gl: WebGLRenderingContext, program: WebGLProgram, canvas:
     return { scaleUniformLocation: scaleUniformLocation as WebGLUniformLocation, centerUniformLocation: centerUniformLocation as WebGLUniformLocation, params };
 }
 
+function updateUniforms(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, scaleUniformLocation: WebGLUniformLocation, 
+    centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}) {
+    gl.uniform1f(scaleUniformLocation, canvas.width / (SCALE_MULTIPLIER * Math.exp(params.z)));
+    gl.uniform2f(centerUniformLocation, params.x, params.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+let interval: NodeJS.Timeout | null = null;
+
+document.addEventListener('mouseup', () => {
+    if (interval) {
+        clearInterval(interval);
+    }
+});
+
 /**
  * Adds event listeners for interaction with the Mandelbrot set visualization.
  * @param gl The WebGL rendering context.
@@ -114,13 +131,84 @@ function setUpUniforms(gl: WebGLRenderingContext, program: WebGLProgram, canvas:
  * @param params An object containing the current values of the x, y, and z parameters.
  */
 function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, scaleUniformLocation: WebGLUniformLocation,
-     centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}
-): void {
+     centerUniformLocation: WebGLUniformLocation, params: {x: number, y: number, z: number}) {
     document.getElementById('max-iterations-btn')!.addEventListener('click', () => {
         const maxIterations: number = parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
         
         console.log('Drawing Mandelbrot set with max iterations:', maxIterations);
         drawMandelbrotSet(canvas, gl, maxIterations);
+    });
+
+    document.getElementById('move-down')!.addEventListener('mousedown', () => {
+        interval = setInterval(() => {
+            params.y -= SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('move-up')!.addEventListener('mousedown', () => {
+        interval = setInterval(() => {
+            params.y += SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('move-left')!.addEventListener('mousedown', () => {
+        interval = setInterval(() => {
+            params.x -= SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('move-right')!.addEventListener('mousedown', () => {
+        interval = setInterval(() => {
+            params.x += SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('zoom-out')!.addEventListener('mousedown', () => {
+        interval = setInterval(() => {
+            params.z += SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('zoom-in')!.addEventListener('mousedown', () => {
+        interval = setInterval(() => {
+            params.z -= SCALE_STEP;
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params);
+        }, 100);
+    });
+
+    document.getElementById('move-down')!.addEventListener('click', () => {
+        params.y -= SCALE_STEP;
+        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+    });
+
+    document.getElementById('move-up')!.addEventListener('click', () => {
+        params.y += SCALE_STEP;
+        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+    });
+
+    document.getElementById('move-left')!.addEventListener('click', () => {
+        params.x -= SCALE_STEP;
+        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+    });
+
+    document.getElementById('move-right')!.addEventListener('click', () => {
+        params.x += SCALE_STEP;
+        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+    });
+
+    document.getElementById('zoom-out')!.addEventListener('click', () => {
+        params.z += SCALE_STEP;
+        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
+    });
+
+    document.getElementById('zoom-in')!.addEventListener('click', () => {
+        params.z -= SCALE_STEP;
+        updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
     });
 
     // Add arrow key and other key event listeners for scaling and interaction
@@ -130,34 +218,31 @@ function addEventListeners(gl: WebGLRenderingContext, canvas: HTMLCanvasElement,
         const zxKeys: string[] = ['z', 'x'];
         if (arrowKeys.includes(event.key) || wasdKeys.includes(event.key) || zxKeys.includes(event.key)) {
             event.preventDefault();
-            const scaleStep: number = 0.01;
             switch (event.key) {
                 case 'ArrowUp':
                 case 'w':
-                    params.y += scaleStep;
+                    params.y += SCALE_STEP;
                     break;
                 case 'ArrowDown':
                 case 's':
-                    params.y -= scaleStep;
+                    params.y -= SCALE_STEP;
                     break;
                 case 'ArrowLeft':
                 case 'a':
-                    params.x -= scaleStep;
+                    params.x -= SCALE_STEP;
                     break;
                 case 'ArrowRight':
                 case 'd':
-                    params.x += scaleStep;
+                    params.x += SCALE_STEP;
                     break;
                 case 'z':
-                    params.z += scaleStep;
+                    params.z += SCALE_STEP;
                     break;
                 case 'x':
-                    params.z -= scaleStep;
+                    params.z -= SCALE_STEP;
                     break;
             }
-            gl.uniform1f(scaleUniformLocation, canvas.width / (SCALE_MULTIPLIER * Math.exp(params.z)));
-            gl.uniform2f(centerUniformLocation, params.x, params.y);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            updateUniforms(gl, canvas, scaleUniformLocation, centerUniformLocation, params)
         }
     });
 }
