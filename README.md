@@ -43,3 +43,13 @@ To build the application, run:
 ```
 npm run build
 ```
+
+## 🖼️ Screenshots
+#### 10 iterations
+![10 iterations](./assets/images/10_iterations.png)
+
+#### 100 iterations
+![100 iterations](./assets/images/100_iterations.png)
+
+#### 1000 iterations
+![1000 iterations](./assets/images/1000_iterations.png)
