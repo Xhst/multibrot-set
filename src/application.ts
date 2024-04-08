@@ -11,6 +11,9 @@ import discreteColoring from './shaders/coloring/discrete.glsl';
 import linearColoring from './shaders/coloring/linear.glsl';
 import normalizedIterationCountColoring from './shaders/coloring/normalized_iteration_count.glsl';
 
+/**
+ * Represents the main application controlling Mandelbrot and Julia sets visualization.
+ */
 export class Application {
 
     private readonly canvasContainer: HTMLElement;
@@ -22,19 +25,26 @@ export class Application {
     private juliaShader: Shader;
 
     constructor() {
+        // Initialize canvas container
         this.canvasContainer = document.getElementById("canvas-container");
 
+        // Calculate canvas width and height
         let sideBySide: boolean = (document.getElementById('side-by-side') as HTMLInputElement).checked
-        let width = sideBySide ? window.innerWidth/2 : window.innerWidth;
+        let width = sideBySide ? window.innerWidth / 2 : window.innerWidth;
         let height = window.innerHeight;
 
+        // Initialize Mandelbrot and Julia canvases
         this.mandelbrot = new Canvas(this.canvasContainer, width, height);
         this.julia = new Canvas(this.canvasContainer, width, height);
 
+        // Initialize shaders
         this.mandelbrotShader = new Shader();
         this.juliaShader = new Shader();
     }
 
+    /**
+     * Starts the application.
+     */
     public start(): void {
         this.mandelbrot.init();
         this.julia.init();
@@ -44,6 +54,9 @@ export class Application {
         this.draw();
     }
 
+    /**
+     * Draws the Mandelbrot and Julia sets.
+     */
     public draw(): void {
         this.setupShaders();
 
@@ -51,6 +64,9 @@ export class Application {
         this.julia.draw(this.juliaShader, this.getJuliaSeed());
     }
 
+    /**
+     * Sets up shaders for Mandelbrot and Julia sets.
+     */
     private setupShaders(): void {
         this.mandelbrotShader.updateMaxIterations(this.getMaxIterations());
         this.mandelbrotShader.updateBailOut(this.getBailOut());
@@ -68,14 +84,26 @@ export class Application {
         this.juliaShader.updateColors(basePalette);
     }
 
+    /**
+     * Gets the maximum iterations for the fractal calculation.
+     * @returns The maximum iterations.
+     */
     private getMaxIterations(): number {
         return parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
     }
 
+    /**
+     * Gets the bail-out value for the fractal calculation.
+     * @returns The bail-out value.
+     */
     private getBailOut(): number {
         return parseFloat((document.getElementById('bail-out') as HTMLInputElement).value);
     }
 
+    /**
+     * Gets the coloring algorithm for the fractal visualization.
+     * @returns The coloring algorithm.
+     */
     private getColoringAlgorithm(): string {
         const algorithmValue: string = (document.getElementById('color-alg') as HTMLSelectElement).value;
 
@@ -99,6 +127,11 @@ export class Application {
         return algorithm;
     }
 
+    /**
+     * Gets the seed for the Julia set.
+     * The seed is defined by the x and y coordinates in complex plane of the Mandelbrot set.
+     * @returns The Julia seed.
+     */
     private getJuliaSeed(): {x: number, y: number} {
         return {
             x: parseFloat((document.getElementById('julia-x') as HTMLInputElement).value),
@@ -106,10 +139,18 @@ export class Application {
         };
     }  
 
+    /**
+     * Gets the Mandelbrot canvas.
+     * @returns The Mandelbrot canvas.
+     */
     public get mandelbrotCanvas(): Canvas {
         return this.mandelbrot;
     }
 
+    /**
+     * Gets the Julia canvas.
+     * @returns The Julia canvas.
+     */
     public get juliaCanvas(): Canvas {
         return this.julia;
     }
