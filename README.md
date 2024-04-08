@@ -45,13 +45,13 @@ npm run build
 ```
 
 ## 🖼️ Screenshots
-#### Mandelbrot and Julia sets, point (0.2815, -0.0085), with grayscale coloring
+#### Mandelbrot and Julia sets, point $(0.2815, -0.0085i)$, with grayscale coloring
 ![10 iterations](./assets/images/m_j_gsc_2815_n0085.png)
 
-#### Mandelbrot and Julia sets, point (-0.245, -0.655), with linear coloring
+#### Mandelbrot and Julia sets, point $(-0.245, -0.655i)$, with linear coloring
 ![100 iterations](./assets/images/m_j_lc_n245_n655.png)
 
-#### Mandelbrot and Julia sets, point (-0.8, -0.155), with normalized iteration count (6 bail-out radius) coloring
+#### Mandelbrot and Julia sets, point $(-0.8, -0.155i)$, with normalized iteration count (6 bail-out radius) coloring
 ![1000 iterations](./assets/images/m_j_nicc_n8_n155.png)
 
 #### 10 iterations Mandelbrot
