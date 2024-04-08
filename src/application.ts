@@ -53,12 +53,14 @@ export class Application {
 
     private setupShaders(): void {
         this.mandelbrotShader.updateMaxIterations(this.getMaxIterations());
+        this.mandelbrotShader.updateBailOut(this.getBailOut());
         this.mandelbrotShader.updateVariables(mandelbrotVariables);
         this.mandelbrotShader.updateIterationsAlgorithm(mandelbrotIterations);
         this.mandelbrotShader.updateColoringAlgorithm(this.getColoringAlgorithm());
         this.mandelbrotShader.updateColors(basePalette);
 
         this.juliaShader.updateMaxIterations(this.getMaxIterations());
+        this.juliaShader.updateBailOut(this.getBailOut());
         this.juliaShader.updateUniforms(juliaUniforms);
         this.juliaShader.updateVariables(juliaVariables);
         this.juliaShader.updateIterationsAlgorithm(mandelbrotIterations);
@@ -68,6 +70,10 @@ export class Application {
 
     private getMaxIterations(): number {
         return parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
+    }
+
+    private getBailOut(): number {
+        return parseFloat((document.getElementById('bail-out') as HTMLInputElement).value);
     }
 
     private getColoringAlgorithm(): string {

@@ -1,7 +1,7 @@
 
 for (int i = 0; i < MAX_ITERATIONS; i++) {
     // Check if the magnitude of z exceeds 2, indicating it's not in the set
-    if (length(z) > 2.0) {
+    if (length(z) > BAILOUT_RADIUS) {
         // Exit the loop if the escape condition is met
         break;
     }

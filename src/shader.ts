@@ -11,6 +11,7 @@ export class Shader {
     constructor() {
         this.shaderOptions = {
             maxIterations: 100,
+            bailOut: 2.0,
             colors: [
                 { r: 0, g: 0, b: 0 },
             ],
@@ -23,6 +24,10 @@ export class Shader {
 
     public updateMaxIterations(maxIterations: number): void {
         this.shaderOptions.maxIterations = maxIterations;
+    }
+
+    public updateBailOut(bailOut: number): void {
+        this.shaderOptions.bailOut = bailOut;
     }
 
     public updateColors(colors: Array<Color>): void {
@@ -48,6 +53,7 @@ export class Shader {
     public assembleProgramSource(): void {
         this.wrappedFragmentShaderSource = fragmentShaderSource
             .replace('@MAX_ITERATIONS@', this.shaderOptions.maxIterations.toString())
+            .replace('@BAILOUT@', this.shaderOptions.bailOut.toFixed(2).toString())
             .replace('@COLORS_COUNT@', this.shaderOptions.colors.length.toString())
             .replace('@UNIFORMS@', this.shaderOptions.uniforms)
             .replace('@VARIABLES@', this.shaderOptions.variables)
@@ -72,6 +78,7 @@ export class Shader {
 
 export type ShaderOptions = {
     maxIterations: number;
+    bailOut: number;
     colors: Array<Color>;
     uniforms: string,
     variables: string;

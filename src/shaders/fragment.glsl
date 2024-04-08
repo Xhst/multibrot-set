@@ -2,6 +2,7 @@
 precision mediump float;
 
 const int MAX_ITERATIONS = @MAX_ITERATIONS@;
+const float BAILOUT_RADIUS = @BAILOUT@;
 
 uniform vec2 resolution;
 uniform vec2 offset;
