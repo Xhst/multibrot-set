@@ -1,6 +1,6 @@
 
 #define PI 3.1415926538
-#define atan2(y, x) (atan(y, x) * float(x != 0.0) + sign(y) * (PI * float(x < 0.0) + 0.5 * PI * float(x == 0.0)))
+#define atan2(y, x) (mix(PI/2.0 - atan(x,y), atan(y,x), float(abs(x) > abs(y))))
 
 precision mediump float;
 
