@@ -25,8 +25,8 @@ export class Canvas {
      */
     constructor(parent: HTMLElement, width: number, height: number) {
         this.parent = parent;
-        this.width = width;
-        this.height = height;
+        this.wrappedWidth = width;
+        this.wrappedHeight = height;
     }
 
     /**
@@ -160,6 +160,8 @@ export class Canvas {
 
     public set width(width: number) {
         this.wrappedWidth = width;
+
+        this.canvas.width = width;
     }
 
     public get height(): number {
@@ -168,6 +170,8 @@ export class Canvas {
 
     public set height(height: number) {
         this.wrappedHeight = height;
+
+        this.canvas.height = height;
     }
 
     public get canvasElement(): HTMLCanvasElement {
