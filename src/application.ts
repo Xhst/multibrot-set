@@ -68,6 +68,7 @@ export class Application {
      * Sets up shaders for Mandelbrot and Julia sets.
      */
     private setupShaders(): void {
+        this.multibrotShader.updateExponent(this.getExponent());
         this.multibrotShader.updateMaxIterations(this.getMaxIterations());
         this.multibrotShader.updateBailOut(this.getBailOut());
         this.multibrotShader.updateVariables(multibrotVariables);
@@ -75,6 +76,7 @@ export class Application {
         this.multibrotShader.updateColoringAlgorithm(this.getColoringAlgorithm());
         this.multibrotShader.updateColors(basePalette);
 
+        this.juliaShader.updateExponent(this.getExponent());
         this.juliaShader.updateMaxIterations(this.getMaxIterations());
         this.juliaShader.updateBailOut(this.getBailOut());
         this.juliaShader.updateUniforms(juliaUniforms);
@@ -82,6 +84,14 @@ export class Application {
         this.juliaShader.updateIterationsAlgorithm(multibrotIterations);
         this.juliaShader.updateColoringAlgorithm(this.getColoringAlgorithm());
         this.juliaShader.updateColors(basePalette);
+    }
+
+    /**
+     * Gets the exponent used for the fractal calculation.
+     * @returns The exponent.
+     */
+    private getExponent(): number {
+        return parseInt((document.getElementById('exponent') as HTMLInputElement).value);
     }
 
     /**

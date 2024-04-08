@@ -4,7 +4,7 @@
 
 precision mediump float;
 
-const float P = 2.0;
+const float P = @EXPONENT@;
 const int MAX_ITERATIONS = @MAX_ITERATIONS@;
 const float BAILOUT_RADIUS = @BAILOUT@;
 

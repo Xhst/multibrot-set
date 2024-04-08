@@ -13,6 +13,7 @@ export class Shader {
 
     constructor() {
         this.shaderOptions = {
+            exponent: 2,
             maxIterations: 100,
             bailOut: 2.0,
             colors: [
@@ -23,6 +24,14 @@ export class Shader {
             iterationsAlgorithm: '',
             coloringAlgorithm: ''
         }
+    }
+
+    /**
+     * Updates the exponent used for the fractal calculation.
+     * @param exponent - The exponent value.
+     */
+    public updateExponent(exponent: number): void {
+        this.shaderOptions.exponent = exponent;
     }
 
     /**
@@ -86,6 +95,7 @@ export class Shader {
      */
     public assembleProgramSource(): void {
         this.wrappedFragmentShaderSource = fragmentShaderSource
+            .replace('@EXPONENT@', this.shaderOptions.exponent.toFixed(2).toString())
             .replace('@MAX_ITERATIONS@', this.shaderOptions.maxIterations.toString())
             .replace('@BAILOUT@', this.shaderOptions.bailOut.toFixed(2).toString())
             .replace('@COLORS_COUNT@', this.shaderOptions.colors.length.toString())
@@ -118,6 +128,7 @@ export class Shader {
  * Represents options for configuring a shader.
  */
 export type ShaderOptions = {
+    exponent: number;
     maxIterations: number;
     bailOut: number;
     colors: Array<Color>;
