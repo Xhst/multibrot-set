@@ -3,7 +3,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: 'production',
-  entry: './src/mandelbrot-set.ts',
+  entry: './src/application.ts',
   watch: true,
   output: {
     filename: 'mandelbrot-set.js',
