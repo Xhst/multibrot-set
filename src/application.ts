@@ -1,7 +1,7 @@
 import juliaVariables from './shaders/variables/julia.glsl';
-import mandelbrotVariables from './shaders/variables/mandelbrot.glsl';
+import multibrotVariables from './shaders/variables/multibrot.glsl';
 import juliaUniforms from './shaders/uniforms/julia.glsl';
-import mandelbrotIterations from './shaders/iterations/mandelbrot.glsl';
+import multibrotIterations from './shaders/iterations/multibrot.glsl';
 import grayscaleColoring from './shaders/coloring/grayscale.glsl';
 import discreteColoring from './shaders/coloring/discrete.glsl';
 import linearColoring from './shaders/coloring/linear.glsl';
@@ -12,16 +12,16 @@ import { basePalette } from "./colors";
 import { InputHandler } from "./input_handler";
 
 /**
- * Represents the main application controlling Mandelbrot and Julia sets visualization.
+ * Represents the main application controlling Multibrot and Julia sets visualization.
  */
 export class Application {
 
     private readonly canvasContainer: HTMLElement;
 
-    private readonly mandelbrot: Canvas;
+    private readonly multibrot: Canvas;
     private readonly julia: Canvas;
 
-    private mandelbrotShader: Shader;
+    private multibrotShader: Shader;
     private juliaShader: Shader;
 
     constructor() {
@@ -33,12 +33,12 @@ export class Application {
         let width = sideBySide ? window.innerWidth / 2 : window.innerWidth;
         let height = window.innerHeight;
 
-        // Initialize Mandelbrot and Julia canvases
-        this.mandelbrot = new Canvas(this.canvasContainer, width, height);
+        // Initialize Multibrot and Julia canvases
+        this.multibrot = new Canvas(this.canvasContainer, width, height);
         this.julia = new Canvas(this.canvasContainer, width, height);
 
         // Initialize shaders
-        this.mandelbrotShader = new Shader();
+        this.multibrotShader = new Shader();
         this.juliaShader = new Shader();
     }
 
@@ -46,7 +46,7 @@ export class Application {
      * Starts the application.
      */
     public start(): void {
-        this.mandelbrot.init();
+        this.multibrot.init();
         this.julia.init();
         
         new InputHandler(this);
@@ -60,7 +60,7 @@ export class Application {
     public draw(): void {
         this.setupShaders();
 
-        this.mandelbrot.draw(this.mandelbrotShader);
+        this.multibrot.draw(this.multibrotShader);
         this.julia.draw(this.juliaShader, this.getJuliaSeed());
     }
 
@@ -68,18 +68,18 @@ export class Application {
      * Sets up shaders for Mandelbrot and Julia sets.
      */
     private setupShaders(): void {
-        this.mandelbrotShader.updateMaxIterations(this.getMaxIterations());
-        this.mandelbrotShader.updateBailOut(this.getBailOut());
-        this.mandelbrotShader.updateVariables(mandelbrotVariables);
-        this.mandelbrotShader.updateIterationsAlgorithm(mandelbrotIterations);
-        this.mandelbrotShader.updateColoringAlgorithm(this.getColoringAlgorithm());
-        this.mandelbrotShader.updateColors(basePalette);
+        this.multibrotShader.updateMaxIterations(this.getMaxIterations());
+        this.multibrotShader.updateBailOut(this.getBailOut());
+        this.multibrotShader.updateVariables(multibrotVariables);
+        this.multibrotShader.updateIterationsAlgorithm(multibrotIterations);
+        this.multibrotShader.updateColoringAlgorithm(this.getColoringAlgorithm());
+        this.multibrotShader.updateColors(basePalette);
 
         this.juliaShader.updateMaxIterations(this.getMaxIterations());
         this.juliaShader.updateBailOut(this.getBailOut());
         this.juliaShader.updateUniforms(juliaUniforms);
         this.juliaShader.updateVariables(juliaVariables);
-        this.juliaShader.updateIterationsAlgorithm(mandelbrotIterations);
+        this.juliaShader.updateIterationsAlgorithm(multibrotIterations);
         this.juliaShader.updateColoringAlgorithm(this.getColoringAlgorithm());
         this.juliaShader.updateColors(basePalette);
     }
@@ -140,11 +140,11 @@ export class Application {
     }  
 
     /**
-     * Gets the Mandelbrot canvas.
-     * @returns The Mandelbrot canvas.
+     * Gets the Multibrot canvas.
+     * @returns The Multibrot canvas.
      */
-    public get mandelbrotCanvas(): Canvas {
-        return this.mandelbrot;
+    public get multibrotCanvas(): Canvas {
+        return this.multibrot;
     }
 
     /**
