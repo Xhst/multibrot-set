@@ -1,7 +1,3 @@
-import { Canvas } from "./canvas";
-import { Shader } from "./shader";
-import { basePalette } from "./colors";
-import { InputHandler } from "./input_handler";
 import juliaVariables from './shaders/variables/julia.glsl';
 import mandelbrotVariables from './shaders/variables/mandelbrot.glsl';
 import juliaUniforms from './shaders/uniforms/julia.glsl';
@@ -10,6 +6,10 @@ import grayscaleColoring from './shaders/coloring/grayscale.glsl';
 import discreteColoring from './shaders/coloring/discrete.glsl';
 import linearColoring from './shaders/coloring/linear.glsl';
 import normalizedIterationCountColoring from './shaders/coloring/normalized_iteration_count.glsl';
+import { Canvas } from "./canvas";
+import { Shader } from "./shader";
+import { basePalette } from "./colors";
+import { InputHandler } from "./input_handler";
 
 /**
  * Represents the main application controlling Mandelbrot and Julia sets visualization.
