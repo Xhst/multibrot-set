@@ -70,8 +70,8 @@ export class InputHandler {
             const fragX = clientX
             const fragY = height - clientY
     
-            const x = ((fragX - (width / 2)) * (scale/ width)) - offsetX;
-            const y = ((fragY - (height / 2)) * (scale / width)) - offsetY;
+            const x = ((fragX - (width / 2)) * (scale/ width)) + offsetX;
+            const y = ((fragY - (height / 2)) * (scale / width)) + offsetY;
             
             (document.getElementById('julia-x') as HTMLInputElement).value = x.toString();
             (document.getElementById('julia-y') as HTMLInputElement).value = y.toString();
