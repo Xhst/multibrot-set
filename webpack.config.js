@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/application.ts',
   watch: true,
   output: {
-    filename: 'mandelbrot-set.js',
+    filename: 'multibrot-set.js',
     path: __dirname + '/build',
   },
   resolve: {
