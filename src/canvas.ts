@@ -1,7 +1,13 @@
 import { Shader } from './shader';
 
+/**
+ * Represents a canvas for rendering fractals using WebGL.
+ */
 export class Canvas {
 
+    /**
+     * Parent element where the canvas is appended.
+     */
     private readonly parent: HTMLElement;
 
     private wrappedWidth: number;
@@ -11,13 +17,21 @@ export class Canvas {
 
     private canvas: HTMLCanvasElement;
     
-
+    /**
+     * Creates an instance of Canvas.
+     * @param parent - Parent element where the canvas will be appended.
+     * @param width - Initial width of the canvas.
+     * @param height - Initial height of the canvas.
+     */
     constructor(parent: HTMLElement, width: number, height: number) {
         this.parent = parent;
         this.width = width;
         this.height = height;
     }
 
+    /**
+     * Initializes the canvas element.
+     */
     public init(): void {
         this.canvas = document.createElement("canvas");
         this.canvas.width = this.width;
@@ -26,6 +40,11 @@ export class Canvas {
         this.parent.appendChild(this.canvas);
     }
 
+    /**
+     * Draws the fractal on the canvas using the provided shader.
+     * @param shader - Shader to use for rendering the fractal.
+     * @param seed - Optional seed for the fractal (for Julia sets).
+     */
     public draw(shader: Shader, seed: {x: number, y: number} | null = null): void {
         const gl = this.canvas.getContext('webgl');
 
@@ -43,6 +62,13 @@ export class Canvas {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
+    /**
+     * Creates a shader program.
+     * @param gl - WebGLRenderingContext for creating the program.
+     * @param vertexShaderSource - Source code of the vertex shader.
+     * @param fragmentShaderSource - Source code of the fragment shader.
+     * @returns The created shader program.
+     */
     private createShaderProgram(gl: WebGLRenderingContext, vertexShaderSource: string, fragmentShaderSource: string): WebGLProgram {
         const vertexShader = this.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
         const fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -58,6 +84,13 @@ export class Canvas {
         return program;
     }
 
+    /**
+     * Creates a shader object.
+     * @param gl - WebGLRenderingContext for creating the shader.
+     * @param type - Type of the shader (VERTEX_SHADER or FRAGMENT_SHADER).
+     * @param source - Source code of the shader.
+     * @returns The created shader object.
+     */
     private createShader(gl: WebGLRenderingContext, type: number, source: string): WebGLShader {
         const shader: WebGLShader | null = gl.createShader(type);
         gl.shaderSource(shader, source);
@@ -65,6 +98,11 @@ export class Canvas {
         return shader as WebGLShader;
     }
 
+    /**
+     * Sets up the vertex buffer for the shader program.
+     * @param gl - WebGLRenderingContext for setting up the buffer.
+     * @param program - Shader program for which the buffer is set up.
+     */
     private setUpVertexBuffer(gl: WebGLRenderingContext, program: WebGLProgram): void {
         const positionAttributeLocation: number = gl.getAttribLocation(program, 'position');
         const positionBuffer: WebGLBuffer | null = gl.createBuffer();
@@ -76,6 +114,13 @@ export class Canvas {
         gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
     }
 
+    /**
+     * Sets up the uniforms for the shader program.
+     * @param gl - WebGLRenderingContext for setting up the uniforms.
+     * @param shader - Shader object containing uniform data.
+     * @param program - Shader program for which the uniforms are set up.
+     * @param seed - Optional seed for the fractal (for Julia sets).
+     */
     private setUpUniforms(gl: WebGLRenderingContext, shader: Shader, program: WebGLProgram, 
         seed: {x: number, y: number} | null = null): void {
         const resolutionUniformLocation: WebGLUniformLocation | null = gl.getUniformLocation(program, 'resolution');
