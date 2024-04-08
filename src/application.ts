@@ -91,7 +91,7 @@ export class Application {
      * @returns The exponent.
      */
     private getExponent(): number {
-        return parseInt((document.getElementById('exponent') as HTMLInputElement).value);
+        return parseFloat((document.getElementById('exponent') as HTMLInputElement).value);
     }
 
     /**
