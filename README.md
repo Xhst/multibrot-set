@@ -28,7 +28,22 @@ $$\mathcal{M} =  \\\{\ c \in \mathbb{C} : \sup_{n \in \mathbb{N}}\ |f^n_c(z)| < 
 
 The case of $p = 2$ is the classic Mandelbrot set from which the name is derived. 
 
+To visualize a Multibrot Set, one typically starts with a grid of complex numbers in the complex plane. For each complex number $c$ on the grid, we generate the sequence by iteratively applying the function $f_c$ starting from $z = 0$. 
+Each point $c$ on the grid is then colored according to the behavior of its corresponding sequence. The point is colored according to the number of iterations it took for the sequence to exceed a certain threshold. This process results in a fractal image that represents the Multibrot Set.
+
 ### ✷ Julia Set
+
+The **Julia Set** $\mathcal{J}$ is a subset of the complex plane that, like the Multibrot Set, is associated with the behavior of complex dynamical systems. However, while the Multibrot Set is defined by the behavior of a sequence of complex numbers under iteration by a function, the Julia Set is defined by the behavior of a single complex number under iteration by the same function.
+
+For a given complex number $c$, the Julia Set is defined as the set of all complex numbers $z$ such that the sequence $(z, f_c(z), f_c(f_c(z)), \dots)$ does not tend towards infinity. In other words, the Julia Set for a given $c$ is the set of all $z$ for which the sequence remains bounded under iteration by the function $f_c(z) = z^p + c$.
+We ha to fix a value $B > 0$ such that $B^2 - B \ge |c|$, then the filled Julia set for this system is the subset of the complex plane given by 
+
+$$\mathcal{J} = \\\{\ z \in \mathbb{C} : \forall n \in \mathbb{N}, |f^n_c(z)| \le B\\}\  $$
+
+Each Julia Set is associated with a unique point in the Multibrot Set, and the shape of the Julia Set can provide insights into the behavior of the complex dynamical system associated with its corresponding point in the Multibrot Set.
+
+Visualizing the Julia Set involves a process similar to the Multibrot Set, but with a slight variation. We begin with a point $c$ from the Multibrot Set, then we iterate the function $f_c(z)$ where $z$ is a complex number in the Julia complex plane, with each point colored according to the number of iterations it took for the sequence to exceed a certain threshold.
+ 
 
 ## 🟢 Getting started
 ### ✔️ Prerequisites
