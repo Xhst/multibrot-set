@@ -42,7 +42,7 @@ $$\mathcal{J} = \\\{\ z \in \mathbb{C} : \forall n \in \mathbb{N}, |f^n_c(z)| \l
 
 Each Julia Set is associated with a unique point in the Multibrot Set, and the shape of the Julia Set can provide insights into the behavior of the complex dynamical system associated with its corresponding point in the Multibrot Set.
 
-Visualizing the Julia Set involves a process similar to the Multibrot Set, but with a slight variation. We begin with a point $c$ from the Multibrot Set, then we iterate the function $f_c(z)$ where $z$ is a complex number in the Julia complex plane, with each point colored according to the number of iterations it took for the sequence to exceed a certain threshold.
+Visualizing the Julia Set involves a process similar to the Multibrot Set, but with a slight variation. We begin with a point $c$ from the Multibrot Set, then for each complex number $z$ we iterate the function $f_c(z)$, with each point colored according to the number of iterations it took for the sequence to exceed a certain threshold.
  
 
 ## 🟢 Getting started
