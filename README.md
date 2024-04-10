@@ -36,7 +36,7 @@ Each point $c$ on the grid is then colored according to the behavior of its corr
 The **Julia Set** $\mathcal{J}$ is a subset of the complex plane that, like the Multibrot Set, is associated with the behavior of complex dynamical systems. However, while the Multibrot Set is defined by the behavior of a sequence of complex numbers under iteration by a function, the Julia Set is defined by the behavior of a single complex number under iteration by the same function.
 
 For a given complex number $c$, the Julia Set is defined as the set of all complex numbers $z$ such that the sequence $(z, f_c(z), f_c(f_c(z)), \dots)$ does not tend towards infinity. In other words, the Julia Set for a given $c$ is the set of all $z$ for which the sequence remains bounded under iteration by the function $f_c(z) = z^p + c$.
-We ha to fix a value $B > 0$ such that $B^2 - B \ge |c|$, then the filled Julia set for this system is the subset of the complex plane given by 
+We have to fix a value $B > 0$ such that $B^2 - B \ge |c|$, then the filled Julia set for this system is the subset of the complex plane given by 
 
 $$\mathcal{J} = \\\{\ z \in \mathbb{C} : \forall n \in \mathbb{N}, |f^n_c(z)| \le B\\}\  $$
 
