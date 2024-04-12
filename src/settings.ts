@@ -3,6 +3,10 @@ import discreteColoring from './shaders/coloring/discrete.glsl';
 import linearColoring from './shaders/coloring/linear.glsl';
 import normalizedIterationCountColoring from './shaders/coloring/normalized_iteration_count.glsl';
 
+/*
+* Represents the settings used for the fractal visualization.
+* The settings are read from the HTML elements.
+*/
 export abstract class Settings {
 
 
