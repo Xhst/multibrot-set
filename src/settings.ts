@@ -73,6 +73,10 @@ export abstract class Settings {
         };
     } 
 
+    /**
+     * Updates the Julia seed in the HTML elements.
+     * @param seed - The new seed for the Julia set. 
+     */
     public static updateJuliaSeed(seed: {x: number, y: number}): void {
         (document.getElementById('julia-x') as HTMLInputElement).value = seed.x.toString();
         (document.getElementById('julia-y') as HTMLInputElement).value = seed.y.toString();
