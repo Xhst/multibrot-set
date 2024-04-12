@@ -22,3 +22,28 @@ export const basePalette: Array<Color> = [
     {r: 66/255, g: 30/255, b: 15/255},
     {r: 25/255, g: 7/255, b: 26/255},
 ];
+
+export function getRandomColor(): Color {
+    return {
+        r: Math.random(),
+        g: Math.random(),
+        b: Math.random(),
+    };
+}
+
+export function getLinearPalette(color1: Color, color2: Color, steps: number): Array<Color> {
+    const palette: Array<Color> = [];
+    for (let i = 0; i < steps; i++) {
+        const t = i / steps;
+        palette.push(interpolateColors(color1, color2, t));
+    }
+    return palette;
+}
+
+export function interpolateColors(color1: Color, color2: Color, t: number): Color {
+    return {
+        r: color1.r + (color2.r - color1.r) * t,
+        g: color1.g + (color2.g - color1.g) * t,
+        b: color1.b + (color2.b - color1.b) * t,
+    };
+}
