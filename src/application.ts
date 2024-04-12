@@ -26,7 +26,7 @@ export class Application {
         this.canvasContainer = document.getElementById("canvas-container");
 
         // Calculate canvas width and height
-        let sideBySide: boolean = (document.getElementById('side-by-side') as HTMLInputElement).checked
+        let sideBySide: boolean = Settings.getSideBySide();
         let width = sideBySide ? window.innerWidth / 2 : window.innerWidth;
         let height = window.innerHeight;
 
