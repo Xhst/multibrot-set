@@ -2,10 +2,7 @@ import juliaVariables from './shaders/variables/julia.glsl';
 import multibrotVariables from './shaders/variables/multibrot.glsl';
 import juliaUniforms from './shaders/uniforms/julia.glsl';
 import multibrotIterations from './shaders/iterations/multibrot.glsl';
-import grayscaleColoring from './shaders/coloring/grayscale.glsl';
-import discreteColoring from './shaders/coloring/discrete.glsl';
-import linearColoring from './shaders/coloring/linear.glsl';
-import normalizedIterationCountColoring from './shaders/coloring/normalized_iteration_count.glsl';
+import { Settings } from './settings';
 import { Canvas } from "./canvas";
 import { Shader } from "./shader";
 import { basePalette } from "./colors";
@@ -61,93 +58,30 @@ export class Application {
         this.setupShaders();
 
         this.multibrot.draw(this.multibrotShader);
-        this.julia.draw(this.juliaShader, this.getJuliaSeed());
+        this.julia.draw(this.juliaShader, Settings.getJuliaSeed());
     }
 
     /**
      * Sets up shaders for Mandelbrot and Julia sets.
      */
     private setupShaders(): void {
-        this.multibrotShader.updateExponent(this.getExponent());
-        this.multibrotShader.updateMaxIterations(this.getMaxIterations());
-        this.multibrotShader.updateBailOut(this.getBailOut());
+        this.multibrotShader.updateExponent(Settings.getExponent());
+        this.multibrotShader.updateMaxIterations(Settings.getMaxIterations());
+        this.multibrotShader.updateBailOut(Settings.getBailOut());
         this.multibrotShader.updateVariables(multibrotVariables);
         this.multibrotShader.updateIterationsAlgorithm(multibrotIterations);
-        this.multibrotShader.updateColoringAlgorithm(this.getColoringAlgorithm());
+        this.multibrotShader.updateColoringAlgorithm(Settings.getColoringAlgorithm());
         this.multibrotShader.updateColors(basePalette);
 
-        this.juliaShader.updateExponent(this.getExponent());
-        this.juliaShader.updateMaxIterations(this.getMaxIterations());
-        this.juliaShader.updateBailOut(this.getBailOut());
+        this.juliaShader.updateExponent(Settings.getExponent());
+        this.juliaShader.updateMaxIterations(Settings.getMaxIterations());
+        this.juliaShader.updateBailOut(Settings.getBailOut());
         this.juliaShader.updateUniforms(juliaUniforms);
         this.juliaShader.updateVariables(juliaVariables);
         this.juliaShader.updateIterationsAlgorithm(multibrotIterations);
-        this.juliaShader.updateColoringAlgorithm(this.getColoringAlgorithm());
+        this.juliaShader.updateColoringAlgorithm(Settings.getColoringAlgorithm());
         this.juliaShader.updateColors(basePalette);
-    }
-
-    /**
-     * Gets the exponent used for the fractal calculation.
-     * @returns The exponent.
-     */
-    private getExponent(): number {
-        return parseFloat((document.getElementById('exponent') as HTMLInputElement).value);
-    }
-
-    /**
-     * Gets the maximum iterations for the fractal calculation.
-     * @returns The maximum iterations.
-     */
-    private getMaxIterations(): number {
-        return parseInt((document.getElementById('max-iterations') as HTMLInputElement).value);
-    }
-
-    /**
-     * Gets the bail-out value for the fractal calculation.
-     * @returns The bail-out value.
-     */
-    private getBailOut(): number {
-        return parseFloat((document.getElementById('bail-out') as HTMLInputElement).value);
-    }
-
-    /**
-     * Gets the coloring algorithm for the fractal visualization.
-     * @returns The coloring algorithm.
-     */
-    private getColoringAlgorithm(): string {
-        const algorithmValue: string = (document.getElementById('color-alg') as HTMLSelectElement).value;
-
-        let algorithm: string;
-        switch (algorithmValue) {
-            default:
-            case "0":
-                algorithm = grayscaleColoring;
-                break;
-            case"1":
-                algorithm = discreteColoring;
-                break;
-            case "2":
-                algorithm = linearColoring;
-                break;
-            case "3":
-                algorithm = normalizedIterationCountColoring;
-                break;
-        }
-
-        return algorithm;
-    }
-
-    /**
-     * Gets the seed for the Julia set.
-     * The seed is defined by the x and y coordinates in complex plane of the Mandelbrot set.
-     * @returns The Julia seed.
-     */
-    private getJuliaSeed(): {x: number, y: number} {
-        return {
-            x: parseFloat((document.getElementById('julia-x') as HTMLInputElement).value),
-            y: parseFloat((document.getElementById('julia-y') as HTMLInputElement).value)
-        };
-    }  
+    } 
 
     /**
      * Gets the Multibrot canvas.

@@ -1,4 +1,5 @@
 import { Application } from './application';
+import { Settings } from './settings';
 
 export class InputHandler {
     private readonly SCALE_STEP: number = 0.05;
@@ -73,8 +74,7 @@ export class InputHandler {
             const x = ((fragX - (width / 2)) * (scale/ width)) + offsetX;
             const y = ((fragY - (height / 2)) * (scale / width)) + offsetY;
             
-            (document.getElementById('julia-x') as HTMLInputElement).value = x.toString();
-            (document.getElementById('julia-y') as HTMLInputElement).value = y.toString();
+            Settings.updateJuliaSeed({x, y})
             
             application.draw();
         };
