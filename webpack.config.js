@@ -4,7 +4,6 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
   mode: 'production',
   entry: './src/application.ts',
-  watch: true,
   output: {
     filename: 'multibrot-set.js',
     path: __dirname + '/build',
@@ -14,6 +13,9 @@ module.exports = {
   },
   stats: {
     children: true,
+  },
+  performance: {
+    maxAssetSize: 1000000, // bytes
   },
   module: {
     rules: [
