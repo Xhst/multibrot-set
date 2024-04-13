@@ -154,6 +154,14 @@ export class Canvas {
         }
     }
 
+    /**
+     * Converts the canvas to a data URL.
+     * @returns The data URL of the canvas.
+     */
+    public toDataURL() {
+        return this.canvas.toDataURL();
+    }
+
     public get width(): number {
         return this.wrappedWidth;
     }
