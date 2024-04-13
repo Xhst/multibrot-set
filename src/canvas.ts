@@ -162,6 +162,18 @@ export class Canvas {
         return this.canvas.toDataURL();
     }
 
+    /**
+     * Saves the canvas as an image.
+     * @param filename - Name of the file to save the canvas as.
+     */
+    public saveAsImage(filename: string = 'fractal.png') {
+        let link = document.createElement('a');
+        link.target = '_blank';
+        link.download = filename;
+        link.href = this.toDataURL();
+        link.click();
+    }
+
     public get width(): number {
         return this.wrappedWidth;
     }
