@@ -12,9 +12,9 @@ export class Color {
     public static fromHex(hex: string): Color {
         const hexValue = hex.replace("#", "");
         return new Color(
-            parseInt(hexValue.substring(0, 2), 16),
-            parseInt(hexValue.substring(2, 4), 16),
-            parseInt(hexValue.substring(4, 6), 16),
+            parseInt(hexValue.substring(0, 2), 16) / 255,
+            parseInt(hexValue.substring(2, 4), 16) / 255,
+            parseInt(hexValue.substring(4, 6), 16) / 255,
         );
     }
 
