@@ -45,8 +45,10 @@ export class Application {
     public start(): void {
         this.multibrot.init();
         this.multibrot.canvasElement.id = "multibrot";
-        
+
         this.julia.init();
+
+        Settings.loadColorPalette(basePalette);
         
         new InputHandler(this);
 
@@ -73,7 +75,7 @@ export class Application {
         this.multibrotShader.updateVariables(multibrotVariables);
         this.multibrotShader.updateIterationsAlgorithm(multibrotIterations);
         this.multibrotShader.updateColoringAlgorithm(Settings.getColoringAlgorithm());
-        this.multibrotShader.updateColors(basePalette);
+        this.multibrotShader.updateColors(Settings.getColorPalette());
 
         this.juliaShader.updateExponent(Settings.getExponent());
         this.juliaShader.updateMaxIterations(Settings.getMaxIterations());
@@ -82,7 +84,7 @@ export class Application {
         this.juliaShader.updateVariables(juliaVariables);
         this.juliaShader.updateIterationsAlgorithm(multibrotIterations);
         this.juliaShader.updateColoringAlgorithm(Settings.getColoringAlgorithm());
-        this.juliaShader.updateColors(basePalette);
+        this.juliaShader.updateColors(Settings.getColorPalette());
     } 
 
     /**

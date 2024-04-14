@@ -11,3 +11,7 @@ html, body {
 #canvas-container #multibrot:hover {
     border: 1px solid red;
 }
+
+.form-control-color {
+    width: 35px!important;
+}

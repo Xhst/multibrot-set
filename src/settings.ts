@@ -2,6 +2,7 @@ import grayscaleColoring from './shaders/coloring/grayscale.glsl';
 import discreteColoring from './shaders/coloring/discrete.glsl';
 import linearColoring from './shaders/coloring/linear.glsl';
 import normalizedIterationCountColoring from './shaders/coloring/normalized_iteration_count.glsl';
+import { Color } from './colors';
 
 /*
 * Represents the settings used for the fractal visualization.
@@ -96,4 +97,21 @@ export abstract class Settings {
         }
     }
 
+    public static loadColorPalette(palette: Color[]): void {
+        for (let i = 0; i < palette.length; i++) {
+            let color = palette[i];
+            let colorInput = document.getElementById(`color-${i}`) as HTMLInputElement;
+            console.log(color.getHex());
+            colorInput.value = color.getHex();
+        }
+    }
+
+    public static getColorPalette(): Color[] {
+        let palette: Color[] = [];
+        for (let i = 0; i < 16; i++) {
+            let colorInput = document.getElementById(`color-${i}`) as HTMLInputElement;
+            palette.push(Color.fromHex(colorInput.value));
+        }
+        return palette;
+    }
 }
