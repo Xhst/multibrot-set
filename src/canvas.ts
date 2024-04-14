@@ -174,6 +174,22 @@ export class Canvas {
         link.click();
     }
 
+    /**
+     * Gets the image data of the canvas.
+     * @returns The ImageData object of the canvas.
+     */
+    public getImageData(): ImageData {
+        const gl = this.canvas.getContext('webgl');
+
+        // Create a buffer to store the pixels
+        let pixels = new Uint8Array(this.width * this.height * 4);
+
+        // Read the pixels from the canvas and store them in the buffer
+        gl.readPixels(0, 0, this.width, this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+
+        return new ImageData(new Uint8ClampedArray(pixels.buffer), this.width, this.height);
+    }
+
     public get width(): number {
         return this.wrappedWidth;
     }
