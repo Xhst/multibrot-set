@@ -26,7 +26,6 @@ export class Animator {
 
     public generateGif(application: Application): void {
         let juliaCanvas = application.juliaCanvas;
-        let ctx = juliaCanvas.canvasElement.getContext('webgl');
         
         let gif = new GIF({
             workers: 2,
@@ -41,10 +40,7 @@ export class Animator {
         for (let point of points) {
             Settings.updateJuliaSeed(point);
             application.draw();
-            let pixels = new Uint8Array(juliaCanvas.width * juliaCanvas.height * 4);
-            ctx.readPixels(0, 0, juliaCanvas.width, juliaCanvas.height, ctx.RGBA, ctx.UNSIGNED_BYTE, pixels);
-            let imageData = new ImageData(new Uint8ClampedArray(pixels.buffer), juliaCanvas.width, juliaCanvas.height);
-            gif.addFrame(imageData);
+            gif.addFrame(juliaCanvas.getImageData());
         }
 
         gif.on('finished', function(blob) {
