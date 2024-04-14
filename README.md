@@ -1,7 +1,7 @@
 
 <h1><table border="0px"><tr><td valign="center"><img src="./assets/favicon.png" height="48px" width="48px"></td><td valign="center">Multibrot & Julia Sets Visualization</td></tr></table></h1>
 
-This project is a visualizer for the Multibrot and Julia Sets.
+This project is a visualizer for the Multibrot and Julia Sets. It allows for the creation and visualization of complex fractals using various coloring techniques. The renderer is highly customizable. The project is written in TypeScript and uses WebGL for rendering, with GLSL shaders for fractal generation and coloring.
 
 Try the web [demo](https://xhst.github.io/multibrot-set/).
 ## 🔎 About
