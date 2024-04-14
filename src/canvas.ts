@@ -52,6 +52,9 @@ export class Canvas {
             console.error('WebGL not supported');
             return;
         }
+
+        gl.viewport(0, 0, this.width, this.height);
+        gl.clear(gl.COLOR_BUFFER_BIT);
         
         shader.assembleProgramSource();
         let shaderProgram = this.createShaderProgram(gl, shader.vertexShaderSource, shader.fragmentShaderSource);
@@ -200,7 +203,6 @@ export class Canvas {
 
     public set width(width: number) {
         this.wrappedWidth = width;
-
         this.canvas.width = width;
     }
 
@@ -210,7 +212,6 @@ export class Canvas {
 
     public set height(height: number) {
         this.wrappedHeight = height;
-
         this.canvas.height = height;
     }
 
