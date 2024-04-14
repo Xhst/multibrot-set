@@ -176,18 +176,22 @@ export class Canvas {
 
     /**
      * Gets the image data of the canvas.
-     * @returns The ImageData object of the canvas.
+     * @param x - X coordinate of the upper-left corner of the rectangle to capture.
+     * @param y - Y coordinate of the upper-left corner of the rectangle to capture.
+     * @param width - Width of the rectangle to capture.
+     * @param height - Height of the rectangle to capture.
+     * @returns The image data of the canvas.
      */
-    public getImageData(): ImageData {
+    public getImageData(x: number = 0, y: number = 0, width: number = this.width, height: number = this.height): ImageData {
         const gl = this.canvas.getContext('webgl');
 
         // Create a buffer to store the pixels
-        let pixels = new Uint8Array(this.width * this.height * 4);
+        let pixels = new Uint8Array(width * height * 4);
 
         // Read the pixels from the canvas and store them in the buffer
-        gl.readPixels(0, 0, this.width, this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        gl.readPixels(x, y, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 
-        return new ImageData(new Uint8ClampedArray(pixels.buffer), this.width, this.height);
+        return new ImageData(new Uint8ClampedArray(pixels.buffer), width, height);
     }
 
     public get width(): number {
