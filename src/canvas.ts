@@ -162,7 +162,12 @@ export class Canvas {
      * @returns The data URL of the canvas.
      */
     public toDataURL() {
-        return this.canvas.toDataURL();
+        const gl = this.canvas.getContext('webgl');
+
+        // redraw the canvas to avoid black background
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        return this.canvas.toDataURL("image/png");
     }
 
     /**
@@ -172,7 +177,7 @@ export class Canvas {
     public saveAsImage(filename: string = 'fractal.png') {
         let link = document.createElement('a');
         link.target = '_blank';
-        link.download = filename;
+        //link.download = filename;
         link.href = this.toDataURL();
         link.click();
     }
