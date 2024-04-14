@@ -177,7 +177,7 @@ export class Canvas {
     public saveAsImage(filename: string = 'fractal.png') {
         let link = document.createElement('a');
         link.target = '_blank';
-        //link.download = filename;
+        link.download = filename;
         link.href = this.toDataURL();
         link.click();
     }
