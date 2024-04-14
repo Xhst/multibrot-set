@@ -62,6 +62,10 @@ To build the application, run:
 ```
 npm run build
 ```
+Or, to have a localhost webpack server, run:
+```
+npm run serve
+```
 
 ## 🖼️ Screenshots
 #### Mandelbrot and Julia sets, point $(0.2815, -0.0085i)$, with grayscale coloring
