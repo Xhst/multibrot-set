@@ -9,6 +9,11 @@ export class Color {
         this.b = b;
     }
 
+    /**
+     * Creates a color from a hex string.
+     * @param hex - The hex string.
+     * @returns The color.
+    */
     public static fromHex(hex: string): Color {
         const hexValue = hex.replace("#", "");
         return new Color(
@@ -18,18 +23,40 @@ export class Color {
         );
     }
 
+    /**
+     * Creates a color from RGB values.
+     * @param r - The red value.
+     * @param g - The green value.
+     * @param b - The blue value.
+     * @returns The color.
+     */
     public static fromRGB(r: number, g: number, b: number): Color {
         return new Color(r / 255, g / 255, b / 255);
     }
 
+    /**
+     * Creates a color from percentage RGB values.
+     * @param r - The red value.
+     * @param g - The green value.
+     * @param b - The blue value.
+     * @returns The color.
+     */
     public static fromPercentage(r: number, g: number, b: number): Color {
         return new Color(r, g, b);
     }
 
+    /**
+     * Returns the color as a hex string.
+     * @returns The hex string.
+     */
     public getHex(): string {
         return "#" + this.componentToHex(this.r) + this.componentToHex(this.g) + this.componentToHex(this.b);
     }
 
+    /**
+     * Returns the color component as an hex string.
+     * @returns The hex string for the component.
+     */
     private componentToHex(c: number): string {
         console.log((c * 255))
         const hex = (c * 255).toString(16);
