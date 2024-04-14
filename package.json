@@ -1,10 +1,10 @@
 {
-    "name": "mandelbrot-set",
+    "name": "multibrot-set",
     "version": "1.0.0",
-    "main": "mandelbrot-set.js",
+    "main": "multibrot-set.js",
     "scripts": {
         "build": "webpack",
-        "start": "node mandelbrot-set.js",
+        "start": "node multibrot-set.js",
         "serve": "webpack serve"
     },
     "devDependencies": {
