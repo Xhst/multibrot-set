@@ -1,5 +1,13 @@
 html, body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+}
+
+#canvas-container canvas {
+    border: 1px solid transparent;
+}
+
+#canvas-container #multibrot:hover {
+    border: 1px solid red;
 }
