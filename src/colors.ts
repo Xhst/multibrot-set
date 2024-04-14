@@ -1,34 +1,63 @@
-export type Color = {
-    r: number;
-    g: number;
-    b: number;
-};
+export class Color {
+    public r: number;
+    public g: number;
+    public b: number;
 
-export const basePalette: Array<Color> = [
-    {r: 9/255, g: 1/255, b: 47/255},
-    {r: 4/255, g: 4/255, b: 73/255},
-    {r: 0/255, g: 7/255, b: 100/255},
-    {r: 12/255, g: 44/255, b: 138/255},
-    {r: 24/255, g: 82/255, b: 177/255},
-    {r: 57/255, g: 125/255, b: 209/255},
-    {r: 134/255, g: 181/255, b: 229/255},
-    {r: 211/255, g: 236/255, b: 248/255},
-    {r: 241/255, g: 233/255, b: 191/255},
-    {r: 248/255, g: 201/255, b: 95/255},
-    {r: 255/255, g: 170/255, b: 0/255},
-    {r: 204/255, g: 128/255, b: 0/255},
-    {r: 153/255, g: 87/255, b: 0/255},
-    {r: 106/255, g: 52/255, b: 3/255},
-    {r: 66/255, g: 30/255, b: 15/255},
-    {r: 25/255, g: 7/255, b: 26/255},
+    private constructor(r: number, g: number, b: number) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+
+    public static fromHex(hex: string): Color {
+        const hexValue = hex.replace("#", "");
+        return new Color(
+            parseInt(hexValue.substring(0, 2), 16),
+            parseInt(hexValue.substring(2, 4), 16),
+            parseInt(hexValue.substring(4, 6), 16),
+        );
+    }
+
+    public static fromRGB(r: number, g: number, b: number): Color {
+        return new Color(r / 255, g / 255, b / 255);
+    }
+
+    public static fromPercentage(r: number, g: number, b: number): Color {
+        return new Color(r, g, b);
+    }
+
+    public getHex(): string {
+        return "#" + this.componentToHex(this.r) + this.componentToHex(this.g) + this.componentToHex(this.b);
+    }
+
+    private componentToHex(c: number): string {
+        console.log((c * 255))
+        const hex = (c * 255).toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+}
+
+export const basePalette: Color[] = [
+    Color.fromRGB(9, 1, 47),
+    Color.fromRGB(4, 4, 73),
+    Color.fromRGB(0, 7, 100),
+    Color.fromRGB(12, 44, 138),
+    Color.fromRGB(24, 82, 177),
+    Color.fromRGB(57, 125, 209),
+    Color.fromRGB(134, 181, 229),
+    Color.fromRGB(211, 236, 248),
+    Color.fromRGB(241, 233, 191),
+    Color.fromRGB(248, 201, 95),
+    Color.fromRGB(255, 170, 0),
+    Color.fromRGB(204, 128, 0),
+    Color.fromRGB(153, 87, 0),
+    Color.fromRGB(106, 52, 3),
+    Color.fromRGB(66, 30, 15),
+    Color.fromRGB(25, 7, 26),
 ];
 
 export function getRandomColor(): Color {
-    return {
-        r: Math.random(),
-        g: Math.random(),
-        b: Math.random(),
-    };
+    return Color.fromRGB(Math.random(), Math.random(), Math.random());
 }
 
 export function getLinearPalette(color1: Color, color2: Color, steps: number): Array<Color> {
@@ -41,9 +70,9 @@ export function getLinearPalette(color1: Color, color2: Color, steps: number): A
 }
 
 export function interpolateColors(color1: Color, color2: Color, t: number): Color {
-    return {
-        r: color1.r + (color2.r - color1.r) * t,
-        g: color1.g + (color2.g - color1.g) * t,
-        b: color1.b + (color2.b - color1.b) * t,
-    };
+    return Color.fromRGB(
+        color1.r + (color2.r - color1.r) * t,
+        color1.g + (color2.g - color1.g) * t,
+        color1.b + (color2.b - color1.b) * t,
+    );
 }
