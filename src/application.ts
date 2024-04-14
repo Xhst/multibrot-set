@@ -25,10 +25,10 @@ export class Application {
         // Initialize canvas container
         this.canvasContainer = document.getElementById("canvas-container");
 
-        // Calculate canvas width and height
-        let sideBySide: boolean = Settings.getSideBySide();
-        let width = sideBySide ? window.innerWidth / 2 : window.innerWidth;
-        let height = window.innerHeight;
+        let size = Math.min(window.innerWidth/2, window.innerHeight);
+
+        let width = size;
+        let height = size;
 
         // Initialize Multibrot and Julia canvases
         this.multibrot = new Canvas(this.canvasContainer, width, height);
@@ -44,6 +44,8 @@ export class Application {
      */
     public start(): void {
         this.multibrot.init();
+        this.multibrot.canvasElement.id = "multibrot";
+        
         this.julia.init();
         
         new InputHandler(this);

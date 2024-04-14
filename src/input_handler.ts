@@ -31,23 +31,13 @@ export class InputHandler {
         });
     
         document.getElementById('side-by-side')!.addEventListener('change', () => {
-            const sideBySide: boolean = (document.getElementById('side-by-side') as HTMLInputElement).checked
-            let width = sideBySide ? window.innerWidth/2 : window.innerWidth;
-            let height = window.innerHeight;
-            
-            application.multibrotCanvas.width = width;
-            application.multibrotCanvas.height = height;
-
-            application.juliaCanvas.width = width;
-            application.juliaCanvas.height = height;
-    
-            application.draw();
+            Settings.toggleSideBySide();
         });
+
         document.getElementById('color-alg')!.addEventListener('change', () => {        
             application.draw();
         });
-    
-    
+        
     
         application.multibrotCanvas.canvasElement.addEventListener('click', (event: MouseEvent) => {
             updateJuliaPosition(event);
@@ -71,7 +61,7 @@ export class InputHandler {
             const fragX = clientX
             const fragY = height - clientY
     
-            const x = ((fragX - (width / 2)) * (scale/ width)) + offsetX;
+            const x = ((fragX - (width / 2)) * (scale / width)) + offsetX;
             const y = ((fragY - (height / 2)) * (scale / width)) + offsetY;
             
             Settings.updateJuliaSeed({x, y})

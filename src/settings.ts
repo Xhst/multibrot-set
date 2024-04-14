@@ -83,11 +83,17 @@ export abstract class Settings {
     }
 
     /**
-     * Gets the side-by-side view mode.
-     * @returns True if side-by-side view mode is enabled, false otherwise.
+     * Toggles the side-by-side visualization.
      */
-    public static getSideBySide(): boolean {
-        return (document.getElementById('side-by-side') as HTMLInputElement).checked
+    public static toggleSideBySide(): void {
+        let canvasContainer = document.getElementById('canvas-container');
+        let sideBySide = (document.getElementById('side-by-side') as HTMLInputElement).checked;
+
+        if (sideBySide) {
+            canvasContainer.classList.remove('flex-column');
+        } else {
+            canvasContainer.classList.add('flex-column');
+        }
     }
 
 }
