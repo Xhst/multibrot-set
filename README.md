@@ -40,7 +40,7 @@ We have to fix a value $B > 0$ such that $B^2 - B \ge |c|$, then the filled Juli
 
 $$\mathcal{J} = \\\{\ z \in \mathbb{C} : \forall n \in \mathbb{N}, |f^n_c(z)| \le B\\}\  $$
 
-Each Julia Set is associated with a unique point in the Multibrot Set, and the shape of the Julia Set can provide insights into the behavior of the complex dynamical system associated with its corresponding point in the Multibrot Set.
+Each Julia Set is associated with a unique point in the Multibrot Set, and the shape of the Julia Set can provide insights into the behavior of the complex dynamical system associated with its corresponding point in the Multibrot Set. Values of the parameter $c$ for which Julia's set is connected are those that are part of Multibrot. For values of $c$ outside the Multibrot Set the Julia Set is a Cantor Space (it's omeomorfic to the Cantor Set).
 
 Visualizing the Julia Set involves a process similar to the Multibrot Set, but with a slight variation. We begin with a point $c$ from the Multibrot Set, then for each complex number $z$ we iterate the function $f_c(z)$, with each point colored according to the number of iterations it took for the sequence to exceed a certain threshold.
  
