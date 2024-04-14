@@ -35,6 +35,8 @@ export class Color {
         const hex = (c * 255).toString(16);
         return hex.length == 1 ? "0" + hex : hex;
     }
+
+    public static BLACK: Color = Color.fromRGB(0, 0, 0);
 }
 
 export const basePalette: Color[] = [

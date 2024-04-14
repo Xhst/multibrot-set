@@ -17,7 +17,7 @@ export class Shader {
             maxIterations: 100,
             bailOut: 2.0,
             colors: [
-                { r: 0, g: 0, b: 0 },
+                Color.BLACK
             ],
             uniforms: '',
             variables: '',
