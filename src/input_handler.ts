@@ -37,7 +37,7 @@ export class InputHandler {
         document.getElementById('color-alg')!.addEventListener('change', () => {        
             application.draw();
         });
-        
+
     
         application.multibrotCanvas.canvasElement.addEventListener('click', (event: MouseEvent) => {
             updateJuliaPosition(event);
@@ -186,6 +186,10 @@ export class InputHandler {
             application.draw();
         });
 
+        document.getElementById('m-download')!.addEventListener('click', () => {
+            application.multibrotCanvas.saveAsImage('multibrot.png');
+        });
+
         // Event listeners for movements and zooming (touch) - Julia
         document.getElementById('j-move-up')!.addEventListener('touchstart', () => {
             this.interval = setInterval(() => {
@@ -301,6 +305,10 @@ export class InputHandler {
         document.getElementById('j-zoom-in')!.addEventListener('click', () => {
             application.juliaCanvas.scale -= this.SCALE_STEP;
             application.draw();
+        });
+
+        document.getElementById('j-download')!.addEventListener('click', () => {
+            application.juliaCanvas.saveAsImage('julia.png');
         });
 
         // Event listeners for movements and zooming (touch) - Both
