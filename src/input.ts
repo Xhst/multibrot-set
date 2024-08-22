@@ -21,8 +21,8 @@ export class Input {
 
     public moveCanvas(canvasType: CanvasType, offsetXChange: number, offsetYChange: number): void {
         const move = (canvas: Canvas) => {
-            canvas.offsetY += offsetYChange;
-            canvas.offsetX += offsetXChange;
+            canvas.offsetY += offsetYChange * canvas.scale;
+            canvas.offsetX += offsetXChange * canvas.scale;
         };
 
         switch (canvasType) {
@@ -42,7 +42,7 @@ export class Input {
 
     public zoomCanvas(canvasType: CanvasType, scaleChange: number): void {
         const zoom = (canvas: Canvas) => {
-            canvas.scale += scaleChange;
+            canvas.scale -= Math.log1p(canvas.scale) * scaleChange;
         };
 
         switch (canvasType) {
@@ -100,7 +100,5 @@ export class Input {
             
         this.redraw();
     }
-
-
 
 }
