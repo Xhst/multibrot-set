@@ -13,7 +13,7 @@ export class Canvas {
     private wrappedWidth: number;
     private wrappedHeight: number;
     private wrappedScale: number = 4;
-    private offset: {x: number, y: number} = {x: 0, y: 0};
+    private wrappedOffset: {x: number, y: number} = {x: 0, y: 0};
 
     private canvas: HTMLCanvasElement;
     
@@ -141,7 +141,7 @@ export class Canvas {
         }
 
         if (offsetUniformLocation) {
-            gl.uniform2f(offsetUniformLocation, this.offset.x, this.offset.y);
+            gl.uniform2f(offsetUniformLocation, this.wrappedOffset.x, this.wrappedOffset.y);
         }
 
         if (colorsUniformLocation) {
@@ -233,18 +233,18 @@ export class Canvas {
     }
 
     public get offsetX(): number {
-        return this.offset.x;
+        return this.wrappedOffset.x;
     }
 
     public get offsetY(): number {
-        return this.offset.y;
+        return this.wrappedOffset.y;
     }
 
     public set offsetX(x: number) {
-        this.offset.x = x;
+        this.wrappedOffset.x = x;
     }
 
     public set offsetY(y: number) {
-        this.offset.y = y;
+        this.wrappedOffset.y = y;
     }
 }
