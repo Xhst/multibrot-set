@@ -40,12 +40,12 @@ export class InputEvent {
             const prefix = canvasType === CanvasType.GLOBAL ? '' : `${canvasType}-`;
 
             const movementActions: Record<string, () => void> = {
-                'move-up': () => this.input.moveCanvas(canvasType, 0, -this.MOVEMENT_STEP),
-                'move-down': () => this.input.moveCanvas(canvasType, 0, this.MOVEMENT_STEP),
-                'move-right': () => this.input.moveCanvas(canvasType, -this.MOVEMENT_STEP, 0),
-                'move-left': () => this.input.moveCanvas(canvasType, this.MOVEMENT_STEP, 0),
-                'zoom-in': () => this.input.zoomCanvas(canvasType, -this.MOVEMENT_STEP),
-                'zoom-out': () => this.input.zoomCanvas(canvasType, this.MOVEMENT_STEP)
+                'move-up': () => this.input.moveCanvas(canvasType, 0, this.MOVEMENT_STEP),
+                'move-down': () => this.input.moveCanvas(canvasType, 0, -this.MOVEMENT_STEP),
+                'move-right': () => this.input.moveCanvas(canvasType, this.MOVEMENT_STEP, 0),
+                'move-left': () => this.input.moveCanvas(canvasType, -this.MOVEMENT_STEP, 0),
+                'zoom-in': () => this.input.zoomCanvas(canvasType, this.MOVEMENT_STEP),
+                'zoom-out': () => this.input.zoomCanvas(canvasType, -this.MOVEMENT_STEP)
             };
 
             for (const action in movementActions) {
