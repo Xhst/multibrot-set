@@ -6,7 +6,8 @@ import { Settings } from './settings';
 import { Canvas } from "./canvas";
 import { Shader } from "./shader";
 import { basePalette } from "./colors";
-import { InputHandler } from "./input_handler";
+import { Input } from "./input";
+import { InputEvent } from "./input_event";
 
 /**
  * Represents the main application controlling Multibrot and Julia sets visualization.
@@ -50,7 +51,7 @@ export class Application {
 
         Settings.loadColorPalette(basePalette);
         
-        new InputHandler(this);
+        new InputEvent(new Input(this));
 
         this.draw();
     }
