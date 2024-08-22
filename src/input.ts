@@ -15,10 +15,20 @@ export class Input {
         this.application = application;
     }
 
+    /**
+     * Redraws the fractals on the canvas.
+     */
     public redraw(): void {
         this.application.draw();
     }
 
+    /**
+     * Moves the canvas by the specified offset.
+     * 
+     * @param canvasType the type of canvas to move
+     * @param offsetXChange x-axis offset change
+     * @param offsetYChange y-axis offset change
+     */
     public moveCanvas(canvasType: CanvasType, offsetXChange: number, offsetYChange: number): void {
         const move = (canvas: Canvas) => {
             canvas.offsetY += offsetYChange * canvas.scale;
@@ -40,6 +50,13 @@ export class Input {
         this.redraw();
     }
 
+    /**
+     * Zooms the canvas by the specified scale change.
+     * The zoom is based on the current scale of the canvas with a logarithmic scale.
+     * 
+     * @param canvasType the type of canvas to zoom
+     * @param scaleChange scale change
+     */
     public zoomCanvas(canvasType: CanvasType, scaleChange: number): void {
         const zoom = (canvas: Canvas) => {
             canvas.scale -= Math.log1p(canvas.scale) * scaleChange;
@@ -60,6 +77,11 @@ export class Input {
         this.redraw();
     }
 
+    /**
+     * Downloads the image of the canvas.
+     * 
+     * @param canvasType the type of canvas to download
+     */
     public downloadImage(canvasType: CanvasType): void {
         const download = (canvas: Canvas, filename: string) => {
             canvas.saveAsImage(`${filename}.png`);
@@ -79,6 +101,12 @@ export class Input {
         }
     }
 
+    /**
+     * Updates the Julia seed based on a point in the multibrot canvas.
+     * 
+     * @param x the x-coordinate of the multibrot
+     * @param y the y-coordinate of the multibrot
+     */
     public updateJuliaSeed(x: number, y: number): void {
         const rect: DOMRect = this.application.multibrotCanvas.canvasElement.getBoundingClientRect();
         const width = this.application.multibrotCanvas.width
