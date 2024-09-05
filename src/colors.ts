@@ -58,7 +58,6 @@ export class Color {
      * @returns The hex string for the component.
      */
     private componentToHex(c: number): string {
-        console.log((c * 255))
         const hex = (c * 255).toString(16);
         return hex.length == 1 ? "0" + hex : hex;
     }

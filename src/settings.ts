@@ -101,7 +101,6 @@ export abstract class Settings {
         for (let i = 0; i < palette.length; i++) {
             let color = palette[i];
             let colorInput = document.getElementById(`color-${i}`) as HTMLInputElement;
-            console.log(color.getHex());
             colorInput.value = color.getHex();
         }
     }
